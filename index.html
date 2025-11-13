@@ -1058,6 +1058,20 @@
             }
         };
 
+        // 음성 프리셋 설정 (pitch, rate 조합으로 다양한 목소리 효과)
+        const voicePresets = [
+            { name: '기본 엄마 목소리 👩', pitch: 0.75, rate: 0.9, icon: '👩' },
+            { name: '따뜻한 엄마 목소리 👩', pitch: 0.70, rate: 0.85, icon: '👩' },
+            { name: '밝은 엄마 목소리 👩', pitch: 0.80, rate: 0.95, icon: '👩' },
+            { name: '부드러운 엄마 목소리 👩', pitch: 0.72, rate: 0.80, icon: '👩' },
+            { name: '친근한 엄마 목소리 👩', pitch: 0.77, rate: 0.88, icon: '👩' },
+            { name: '온화한 엄마 목소리 👩', pitch: 0.73, rate: 0.82, icon: '👩' },
+            { name: '자연스러운 엄마 목소리 👩', pitch: 0.76, rate: 0.90, icon: '👩' },
+            { name: '명확한 엄마 목소리 👩', pitch: 0.78, rate: 0.92, icon: '👩' },
+            { name: '차분한 엄마 목소리 👩', pitch: 0.71, rate: 0.78, icon: '👩' },
+            { name: '활기찬 엄마 목소리 👩', pitch: 0.79, rate: 0.98, icon: '👩' }
+        ];
+
         // 음성 목록 로드 (한국어만, 다양화)
         function loadVoices() {
             voices = synth.getVoices();
@@ -1145,6 +1159,27 @@
                 }
             });
             
+            // 실제 시스템 음성이 있으면 프리셋도 추가
+            if (allKoreanVoices.length > 0) {
+                // 각 실제 음성에 대해 프리셋 옵션 추가
+                allKoreanVoices.forEach(({ voice, index }) => {
+                    voicePresets.forEach((preset, presetIndex) => {
+                        const option = document.createElement('option');
+                        option.value = `preset_${index}_${presetIndex}`;
+                        option.textContent = `${voice.name} - ${preset.name}`;
+                        voiceSelect.appendChild(option);
+                    });
+                });
+            } else {
+                // 시스템 음성이 없어도 프리셋만이라도 제공 (기본 음성 사용)
+                voicePresets.forEach((preset, presetIndex) => {
+                    const option = document.createElement('option');
+                    option.value = `preset_default_${presetIndex}`;
+                    option.textContent = preset.name;
+                    voiceSelect.appendChild(option);
+                });
+            }
+            
             // 우선순위 음성이 없으면 첫 번째 한국어 음성 선택
             if (preferredVoiceIndex === null && allKoreanVoices.length > 0) {
                 preferredVoiceIndex = allKoreanVoices[0].index;
@@ -1152,18 +1187,29 @@
             
             if (preferredVoiceIndex !== null) {
                 voiceSelect.value = preferredVoiceIndex;
+            } else if (allKoreanVoices.length === 0 && voicePresets.length > 0) {
+                // 시스템 음성이 없으면 첫 번째 프리셋 선택
+                voiceSelect.value = 'preset_default_0';
             }
             
             // 한국어 음성 개수 표시 (더 상세한 정보)
-            if (allKoreanVoices.length > 0) {
+            const totalOptions = voiceSelect.options.length - 1; // 기본 옵션 제외
+            if (totalOptions > 0) {
                 const infoText = document.querySelector('.info-text');
                 if (infoText) {
-                    const priorityCount = Array.from(voiceSelect.options).filter(opt => 
-                        opt.textContent.includes('⭐') || opt.textContent.includes('✨')
-                    ).length;
-                    infoText.innerHTML = `💡 총 ${allKoreanVoices.length}개의 한국어 음성 중 선택 가능합니다. 
-                        ${priorityCount > 0 ? `⭐ 표시된 ${priorityCount}개는 추천 음성입니다.` : ''}
-                        👩는 여성 목소리, 👨는 남성 목소리입니다.`;
+                    const systemVoices = allKoreanVoices.length;
+                    const presetCount = totalOptions - systemVoices;
+                    let infoMessage = `💡 총 ${totalOptions}개의 음성 옵션 중 선택 가능합니다.`;
+                    if (systemVoices > 0) {
+                        infoMessage += ` (시스템 음성: ${systemVoices}개`;
+                        if (presetCount > 0) {
+                            infoMessage += `, 프리셋: ${presetCount}개`;
+                        }
+                        infoMessage += ')';
+                    } else {
+                        infoMessage += ` (프리셋: ${presetCount}개)`;
+                    }
+                    infoText.innerHTML = infoMessage;
                 }
             }
         }
@@ -1224,13 +1270,39 @@
 
             utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'ko-KR'; // 한국어 고정
-            utterance.rate = parseFloat(speedRange.value);
-            utterance.pitch = 0.75;
             utterance.volume = 1.0;
 
-            const selectedVoiceIndex = voiceSelect.value;
-            if (selectedVoiceIndex !== '') {
-                utterance.voice = voices[selectedVoiceIndex];
+            const selectedVoiceValue = voiceSelect.value;
+            
+            // 프리셋 처리
+            if (selectedVoiceValue.startsWith('preset_')) {
+                const parts = selectedVoiceValue.split('_');
+                const voiceIndex = parts[1] === 'default' ? null : parseInt(parts[1]);
+                const presetIndex = parseInt(parts[2]);
+                
+                if (voiceIndex !== null && voices[voiceIndex]) {
+                    utterance.voice = voices[voiceIndex];
+                }
+                
+                const preset = voicePresets[presetIndex];
+                if (preset) {
+                    utterance.pitch = preset.pitch;
+                    utterance.rate = preset.rate * parseFloat(speedRange.value) / 0.9; // 속도 조절 보정
+                } else {
+                    utterance.pitch = 0.75;
+                    utterance.rate = parseFloat(speedRange.value);
+                }
+            } else {
+                // 일반 음성 선택
+                utterance.rate = parseFloat(speedRange.value);
+                utterance.pitch = 0.75;
+                
+                if (selectedVoiceValue !== '') {
+                    const voiceIndex = parseInt(selectedVoiceValue);
+                    if (voices[voiceIndex]) {
+                        utterance.voice = voices[voiceIndex];
+                    }
+                }
             }
 
             // 대략적인 읽기 시간 계산 (초당 평균 3글자)
