@@ -348,9 +348,9 @@
                 </div>
 
                 <div class="control-group">
-                    <label>읽기 속도 (아이들을 위해 느리게)</label>
-                    <input type="range" id="speedRange" min="0.5" max="2" step="0.1" value="0.6">
-                    <div class="speed-display" id="speedDisplay">0.6x</div>
+                    <label>읽기 속도</label>
+                    <input type="range" id="speedRange" min="0.5" max="2" step="0.1" value="0.9">
+                    <div class="speed-display" id="speedDisplay">0.9x</div>
                 </div>
             </div>
 
@@ -455,7 +455,7 @@
         });
         
         // 초기 속도 표시
-        speedDisplay.textContent = '0.6x';
+        speedDisplay.textContent = '0.9x';
 
         // 탭 전환
         function showTab(tabName) {
@@ -494,7 +494,7 @@
 
             utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = languageSelect.value;
-            utterance.rate = Math.max(0.5, parseFloat(speedRange.value) * 0.9); // 아이들을 위해 더 느리게
+            utterance.rate = parseFloat(speedRange.value); // 사용자가 설정한 속도 사용
             utterance.pitch = 0.7; // 더 낮고 부드러운 톤 (엄마 목소리처럼)
             utterance.volume = 0.95; // 약간 낮춰서 더 부드럽게
 
