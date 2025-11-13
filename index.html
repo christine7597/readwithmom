@@ -1404,14 +1404,28 @@
             html += '</div>';
             
             const modal = document.createElement('div');
+            modal.id = 'bookmarksModal';
             modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;';
+            
+            const closeModal = function() {
+                const modalElement = document.getElementById('bookmarksModal');
+                if (modalElement) modalElement.remove();
+            };
+            
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeModal();
+            });
+            
             modal.innerHTML = `
                 <div style="background: white; border-radius: 20px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative;">
-                    <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="position: absolute; top: 15px; right: 15px; background: #dc3545; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 1.2em;">×</button>
+                    <button id="closeBookmarks" style="position: absolute; top: 15px; right: 15px; background: #dc3545; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 1.2em; z-index: 10001;">×</button>
                     ${html}
                 </div>
             `;
             document.body.appendChild(modal);
+            
+            const closeBtn = document.getElementById('closeBookmarks');
+            if (closeBtn) closeBtn.addEventListener('click', closeModal);
         }
 
         function loadBookmarkText(id) {
@@ -1568,14 +1582,28 @@
             html += '</div>';
             
             const modal = document.createElement('div');
+            modal.id = 'readingHistoryModal';
             modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;';
+            
+            const closeModal = function() {
+                const modalElement = document.getElementById('readingHistoryModal');
+                if (modalElement) modalElement.remove();
+            };
+            
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeModal();
+            });
+            
             modal.innerHTML = `
                 <div style="background: white; border-radius: 20px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative;">
-                    <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="position: absolute; top: 15px; right: 15px; background: #dc3545; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 1.2em;">×</button>
+                    <button id="closeReadingHistory" style="position: absolute; top: 15px; right: 15px; background: #dc3545; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 1.2em; z-index: 10001;">×</button>
                     ${html}
                 </div>
             `;
             document.body.appendChild(modal);
+            
+            const closeBtn = document.getElementById('closeReadingHistory');
+            if (closeBtn) closeBtn.addEventListener('click', closeModal);
         }
 
         // 대화 가이드
@@ -1664,14 +1692,37 @@
             html += '</div>';
             
             const modal = document.createElement('div');
+            modal.id = 'conversationGuideModal';
             modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;';
+            
+            // 닫기 함수
+            const closeModal = function() {
+                const modalElement = document.getElementById('conversationGuideModal');
+                if (modalElement) {
+                    modalElement.remove();
+                }
+            };
+            
+            // 배경 클릭 시 닫기
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+            
             modal.innerHTML = `
                 <div style="background: white; border-radius: 20px; padding: 30px; max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative;">
-                    <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="position: absolute; top: 15px; right: 15px; background: #dc3545; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 1.2em;">×</button>
+                    <button id="closeConversationGuide" style="position: absolute; top: 15px; right: 15px; background: #dc3545; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 1.2em; z-index: 10001;">×</button>
                     ${html}
                 </div>
             `;
             document.body.appendChild(modal);
+            
+            // 닫기 버튼 이벤트 리스너
+            const closeBtn = document.getElementById('closeConversationGuide');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeModal);
+            }
         }
 
         function escapeHtml(text) {
