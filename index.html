@@ -12,74 +12,211 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            font-family: 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ff9a9e 100%);
             min-height: 100vh;
             padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+            pointer-events: none;
+            z-index: 0;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
         .header {
             text-align: center;
             color: white;
             margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .header h1 {
-            font-size: 2.5em;
+            font-size: 3em;
             margin-bottom: 10px;
+            font-weight: 700;
         }
 
         .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
+            font-size: 1.3em;
+            opacity: 0.95;
         }
 
         .main-card {
             background: white;
-            border-radius: 20px;
+            border-radius: 30px;
             padding: 40px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            animation: fadeInUp 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff9a9e, #fecfef, #ff9a9e);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            border-bottom: 3px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: none;
+            border-radius: 15px 15px 0 0;
+            color: #666;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .tab-btn:hover::before {
+            left: 100%;
+        }
+
+        .tab-btn:hover {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: white;
+            box-shadow: 0 5px 20px rgba(255, 154, 158, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             color: #333;
             font-weight: 600;
-            font-size: 1.1em;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         textarea {
             width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 1em;
+            padding: 20px;
+            border: 3px solid #e0e0e0;
+            border-radius: 20px;
+            font-size: 1.1em;
             font-family: inherit;
+            line-height: 1.8;
             resize: vertical;
-            min-height: 200px;
-            transition: border-color 0.3s;
+            min-height: 250px;
+            transition: all 0.3s;
+            background: #fafafa;
         }
 
         textarea:focus {
             outline: none;
             border-color: #ff9a9e;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(255, 154, 158, 0.1);
+        }
+
+        .char-count {
+            text-align: right;
+            color: #999;
+            font-size: 0.95em;
+            margin-top: 8px;
+            font-weight: 500;
         }
 
         .controls {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 20px;
+            border: 2px solid #f0f0f0;
         }
 
         .control-group {
@@ -88,177 +225,287 @@
         }
 
         .control-group label {
-            font-size: 0.9em;
-            color: #666;
-            margin-bottom: 5px;
+            font-size: 1em;
+            color: #555;
+            margin-bottom: 10px;
+            font-weight: 600;
         }
 
         select, input[type="range"] {
-            padding: 10px;
+            padding: 12px 15px;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 1em;
+            background: white;
+            transition: all 0.3s;
         }
 
-        select:focus {
+        select:focus, input[type="range"]:focus {
             outline: none;
             border-color: #ff9a9e;
+            box-shadow: 0 0 0 3px rgba(255, 154, 158, 0.1);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            background: linear-gradient(90deg, #ff9a9e, #fecfef);
+            border-radius: 5px;
+            padding: 0;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #ff9a9e;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: #ff6b9d;
         }
 
         .speed-display {
             text-align: center;
             color: #ff6b9d;
             font-weight: bold;
-            margin-top: 5px;
+            font-size: 1.1em;
+            margin-top: 8px;
         }
 
         .button-group {
             display: flex;
             gap: 15px;
             flex-wrap: wrap;
-            margin-top: 20px;
+            margin: 30px 0;
         }
 
         .btn {
-            padding: 15px 30px;
+            padding: 18px 35px;
             border: none;
-            border-radius: 12px;
-            font-size: 1.1em;
-            font-weight: 600;
+            border-radius: 15px;
+            font-size: 1.2em;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
             flex: 1;
-            min-width: 150px;
+            min-width: 160px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
             color: #333;
-            font-weight: 700;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 154, 158, 0.4);
         }
 
         .btn-primary:disabled {
-            background: #ccc;
+            background: #ddd;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
 
         .btn-secondary {
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             color: #333;
             border: 2px solid #e0e0e0;
         }
 
         .btn-secondary:hover {
-            background: #e9ecef;
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+            transform: translateY(-2px);
         }
 
         .btn-danger {
-            background: #dc3545;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
             color: white;
         }
 
         .btn-danger:hover {
-            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
         }
 
         .status {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 12px;
+            margin: 25px 0;
+            padding: 20px;
+            border-radius: 15px;
             text-align: center;
             font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s;
         }
 
         .status.playing {
-            background: #d4edda;
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
             color: #155724;
-            border: 2px solid #c3e6cb;
+            border: 3px solid #b1dfbb;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
         }
 
         .status.stopped {
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             color: #666;
+            border: 3px solid #e0e0e0;
+        }
+
+        .progress-container {
+            margin: 20px 0;
+            display: none;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff9a9e, #fecfef, #ff9a9e);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+            transition: width 0.3s;
+            border-radius: 10px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
         .example-texts {
-            margin-top: 30px;
+            margin-top: 40px;
             padding-top: 30px;
-            border-top: 2px solid #e0e0e0;
+            border-top: 3px solid #f0f0f0;
         }
 
         .example-texts h3 {
             color: #333;
-            margin-bottom: 15px;
-        }
-
-        .example-btn {
-            display: inline-block;
-            padding: 8px 16px;
-            margin: 5px;
-            background: #f8f9fa;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: all 0.2s;
-        }
-
-        .example-btn:hover {
-            background: #ff9a9e;
-            color: white;
-            border-color: #ff9a9e;
-        }
-
-        .char-count {
-            text-align: right;
-            color: #666;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
             margin-bottom: 20px;
-            flex-wrap: wrap;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .tab-btn {
-            padding: 12px 24px;
-            background: rgba(255, 255, 255, 0.3);
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            border-radius: 12px;
-            color: white;
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .example-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
             cursor: pointer;
-            font-size: 1.1em;
-            font-weight: 600;
             transition: all 0.3s;
-            flex: 1;
-            min-width: 150px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
-        .tab-btn:hover {
-            background: rgba(255, 255, 255, 0.4);
+        .example-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,154,158,0.2), transparent);
+            transition: left 0.5s;
         }
 
-        .tab-btn.active {
-            background: white;
-            color: #ff9a9e;
-            border-color: white;
+        .example-card:hover::before {
+            left: 100%;
         }
 
-        .tab-content {
-            display: none;
+        .example-card:hover {
+            transform: translateY(-5px);
+            border-color: #ff9a9e;
+            box-shadow: 0 10px 30px rgba(255, 154, 158, 0.3);
         }
 
-        .tab-content.active {
-            display: block;
+        .example-card-title {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .example-card-desc {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .info-text {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 8px;
+            padding: 10px;
+            background: #fff3cd;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            .main-card {
+                padding: 25px;
+            }
+            .example-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -278,7 +525,7 @@
             <!-- 부모와 함께 섹션 -->
             <div id="parent" class="tab-content active">
                 <div class="form-group">
-                    <label for="textInput">부모와 아이가 함께 소통하며 읽을 내용을 입력하세요</label>
+                    <label for="textInput">📖 부모와 아이가 함께 소통하며 읽을 내용을 입력하세요</label>
                     <textarea id="textInput" placeholder="부모와 아이가 함께 읽고 대화할 수 있는 내용을 입력하세요...&#10;&#10;예: 오늘 하루 어떤 일이 있었나요? 기분이 어땠나요? 함께 이야기해볼까요?"></textarea>
                     <div class="char-count">
                         <span id="charCount">0</span> 글자
@@ -286,24 +533,40 @@
                 </div>
 
                 <div class="example-texts">
-                    <h3>📖 부모와 함께 읽기 예시</h3>
-                    <button class="example-btn" onclick="loadExample('parent_emotion')">감정 대화하기</button>
-                    <button class="example-btn" onclick="loadExample('parent_communication')">소통 연습</button>
-                    <button class="example-btn" onclick="loadExample('parent_problem')">문제 해결하기</button>
-                    <button class="example-btn" onclick="loadExample('parent_bonding')">관계 쌓기</button>
-                    <button class="example-btn" onclick="loadExample('parent_rules')">규칙 정하기</button>
-                    <button class="example-btn" onclick="loadExample('parent_praise')">칭찬하기</button>
-                    <button class="example-btn" onclick="loadExample('parent_conflict')">갈등 해결</button>
-                    <button class="example-btn" onclick="loadExample('parent_empathy')">공감하기</button>
-                    <button class="example-btn" onclick="loadExample('parent_limits')">경계 설정</button>
-                    <button class="example-btn" onclick="loadExample('parent_gratitude')">감사 표현</button>
+                    <h3>📚 실제 아동책 예시</h3>
+                    <div class="example-grid">
+                        <div class="example-card" onclick="loadBook('parent', 'bear')">
+                            <div class="example-card-title">🐻 곰돌이 푸</div>
+                            <div class="example-card-desc">친구와 함께하는 즐거움</div>
+                        </div>
+                        <div class="example-card" onclick="loadBook('parent', 'piglet')">
+                            <div class="example-card-title">🐷 아기 돼지 삼형제</div>
+                            <div class="example-card-desc">협력과 지혜의 중요성</div>
+                        </div>
+                        <div class="example-card" onclick="loadBook('parent', 'redhood')">
+                            <div class="example-card-title">🧺 빨간 모자</div>
+                            <div class="example-card-desc">조심스러움과 배려</div>
+                        </div>
+                        <div class="example-card" onclick="loadBook('parent', 'cinderella')">
+                            <div class="example-card-title">👠 신데렐라</div>
+                            <div class="example-card-desc">선한 마음과 용기</div>
+                        </div>
+                        <div class="example-card" onclick="loadBook('parent', 'snowwhite')">
+                            <div class="example-card-title">🍎 백설공주</div>
+                            <div class="example-card-desc">친절함과 우정</div>
+                        </div>
+                        <div class="example-card" onclick="loadBook('parent', 'uglyduckling')">
+                            <div class="example-card-title">🦢 미운 오리 새끼</div>
+                            <div class="example-card-desc">자신감과 성장</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- 아이를 위한 섹션 -->
             <div id="child" class="tab-content">
                 <div class="form-group">
-                    <label for="textInputChild">아이에게 읽어주며 혼자 성찰할 수 있는 내용을 입력하세요</label>
+                    <label for="textInputChild">📖 아이에게 읽어주며 혼자 성찰할 수 있는 내용을 입력하세요</label>
                     <textarea id="textInputChild" placeholder="아이에게 읽어주면서 아이가 스스로 생각해볼 수 있는 내용을 입력하세요...&#10;&#10;예: 나는 어떤 감정을 느낄 수 있을까요? 화가 날 때는 어떻게 하면 좋을까요?"></textarea>
                     <div class="char-count">
                         <span id="charCountChild">0</span> 글자
@@ -311,49 +574,68 @@
                 </div>
 
                 <div class="example-texts">
-                    <h3>📖 아이를 위한 읽기 예시</h3>
-                    <button class="example-btn" onclick="loadExampleChild('child_feelings')">내 감정 알아보기</button>
-                    <button class="example-btn" onclick="loadExampleChild('child_friends')">친구와 함께하기</button>
-                    <button class="example-btn" onclick="loadExampleChild('child_brave')">용기 내기</button>
-                    <button class="example-btn" onclick="loadExampleChild('child_kind')">친절하게 대하기</button>
-                    <button class="example-btn" onclick="loadExampleChild('child_sharing')">나누기</button>
-                    <button class="example-btn" onclick="loadExampleChild('child_sorry')">미안해하기</button>
-                    <button class="example-btn" onclick="loadExampleChild('child_different')">다름 이해하기</button>
-                    <button class="example-btn" onclick="loadExampleChild('child_patience')">기다리기</button>
-                    <button class="example-btn" onclick="loadExampleChild('child_help')">도와주기</button>
-                    <button class="example-btn" onclick="loadExampleChild('child_love')">사랑 표현하기</button>
+                    <h3>📚 실제 아동책 예시</h3>
+                    <div class="example-grid">
+                        <div class="example-card" onclick="loadBook('child', 'lion')">
+                            <div class="example-card-title">🦁 사자와 쥐</div>
+                            <div class="example-card-desc">작은 친구도 소중해요</div>
+                        </div>
+                        <div class="example-card" onclick="loadBook('child', 'tortoise')">
+                            <div class="example-card-title">🐢 토끼와 거북이</div>
+                            <div class="example-card-desc">꾸준함의 힘</div>
+                        </div>
+                        <div class="example-card" onclick="loadBook('child', 'ant')">
+                            <div class="example-card-title">🐜 개미와 베짱이</div>
+                            <div class="example-card-desc">노력의 가치</div>
+                        </div>
+                        <div class="example-card" onclick="loadBook('child', 'boy')">
+                            <div class="example-card-title">👦 양치기 소년</div>
+                            <div class="example-card-desc">정직함의 중요성</div>
+                        </div>
+                        <div class="example-card" onclick="loadBook('child', 'hare')">
+                            <div class="example-card-title">🐰 토끼의 재판</div>
+                            <div class="example-card-desc">공정함과 정의</div>
+                        </div>
+                        <div class="example-card" onclick="loadBook('child', 'fox')">
+                            <div class="example-card-title">🦊 여우와 포도</div>
+                            <div class="example-card-desc">포기하지 않는 마음</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="controls">
                 <div class="control-group">
-                    <label>언어 선택</label>
+                    <label>🌍 언어 선택</label>
                     <select id="languageSelect">
                         <option value="ko-KR">한국어</option>
                         <option value="en-US">English (US)</option>
                         <option value="en-GB">English (UK)</option>
                         <option value="ja-JP">日本語</option>
                         <option value="zh-CN">中文</option>
-                        <option value="es-ES">Español</option>
-                        <option value="fr-FR">Français</option>
-                        <option value="de-DE">Deutsch</option>
                     </select>
                 </div>
 
                 <div class="control-group">
-                    <label>음성 선택 (더 자연스러운 음성을 선택하세요)</label>
+                    <label>🎤 음성 선택</label>
                     <select id="voiceSelect">
                         <option value="">자동 선택 (가장 자연스러운 음성)</option>
                     </select>
-                    <div class="info-text" style="font-size: 0.85em; color: #666; margin-top: 5px;">
+                    <div class="info-text">
                         💡 Neural, Premium, Enhanced 음성이 더 자연스럽습니다
                     </div>
                 </div>
 
                 <div class="control-group">
-                    <label>읽기 속도</label>
+                    <label>⚡ 읽기 속도</label>
                     <input type="range" id="speedRange" min="0.5" max="2" step="0.1" value="0.9">
                     <div class="speed-display" id="speedDisplay">0.9x</div>
+                </div>
+            </div>
+
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
                 </div>
             </div>
 
@@ -365,15 +647,6 @@
 
             <div class="status stopped" id="status">
                 준비됨
-            </div>
-
-            <div class="example-texts">
-                <h3>📖 아동심리 도움책 예시</h3>
-                <button class="example-btn" onclick="loadExample('emotion')">아이의 감정 이해하기</button>
-                <button class="example-btn" onclick="loadExample('communication')">효과적인 소통</button>
-                <button class="example-btn" onclick="loadExample('selfesteem')">자존감 키우기</button>
-                <button class="example-btn" onclick="loadExample('behavior')">행동 이해하기</button>
-                <button class="example-btn" onclick="loadExample('anxiety')">불안 관리하기</button>
             </div>
         </div>
     </div>
@@ -391,11 +664,318 @@
         const status = document.getElementById('status');
         const charCount = document.getElementById('charCount');
         const charCountChild = document.getElementById('charCountChild');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
         let currentTab = 'parent';
 
         let synth = window.speechSynthesis;
         let utterance = null;
         let voices = [];
+        let startTime = null;
+        let totalDuration = 0;
+
+        // 실제 아동책 내용
+        const books = {
+            parent: {
+                bear: `곰돌이 푸와 친구들
+
+곰돌이 푸는 100에이커 숲에서 친구들과 함께 살고 있었어요.
+푸는 꿀을 정말 좋아했어요. 어느 날, 푸는 꿀을 찾으러 나갔어요.
+
+"꿀을 찾아야 해!" 푸가 말했어요.
+그때 작은 돼지 피글렛이 나타났어요.
+
+"푸야, 나도 함께 가도 될까?" 피글렛이 물었어요.
+"물론이야! 함께 가면 더 재미있어!" 푸가 대답했어요.
+
+함께 길을 걸어가면서 푸와 피글렛은 많은 이야기를 나눴어요.
+"친구와 함께 있으면 외롭지 않아." 푸가 말했어요.
+"맞아! 함께 있으면 모든 일이 더 즐거워." 피글렛이 웃으며 말했어요.
+
+부모님과 아이가 함께 읽으면서 이야기해볼 수 있어요:
+"푸와 피글렛은 왜 함께 가는 게 좋았을까요?"
+"우리도 친구와 함께 할 때 어떤 기분이 드나요?"
+"함께 있으면 왜 더 즐거울까요?"`,
+
+                piglet: `아기 돼지 삼형제
+
+옛날 옛날에 아기 돼지 세 마리가 있었어요.
+큰 돼지, 중간 돼지, 작은 돼지였어요.
+
+어느 날, 엄마 돼지가 말했어요:
+"이제 너희는 자립해야 해. 각자 집을 지어보렴."
+
+큰 돼지는 지푸라기로 집을 지었어요. 금방 지었지만 약했어요.
+중간 돼지는 나뭇가지로 집을 지었어요. 조금 더 튼튼했어요.
+작은 돼지는 벽돌로 집을 지었어요. 시간이 오래 걸렸지만 가장 튼튼했어요.
+
+나쁜 늑대가 나타났어요. 큰 돼지와 중간 돼지의 집은 쉽게 무너졌어요.
+하지만 작은 돼지의 벽돌 집은 튼튼해서 늑대가 들어올 수 없었어요.
+
+작은 돼지는 큰 돼지와 중간 돼지를 자신의 집으로 초대했어요.
+"우리 함께 살자! 함께 있으면 더 안전해." 작은 돼지가 말했어요.
+
+부모님과 아이가 함께 생각해볼 수 있어요:
+"왜 작은 돼지의 집이 가장 튼튼했을까요?"
+"함께 있으면 어떤 점이 좋을까요?"
+"우리는 어떤 일을 함께 할 수 있을까요?"`,
+
+                redhood: `빨간 모자
+
+옛날에 빨간 모자를 좋아하는 어린 소녀가 있었어요.
+모두 그녀를 "빨간 모자"라고 불렀어요.
+
+어느 날, 엄마가 말했어요:
+"할머니께 과일 바구니를 가져다 드려야 해. 
+하지만 조심해야 해. 숲에는 나쁜 늑대가 있을 수 있으니까."
+
+빨간 모자는 조심스럽게 숲을 지나갔어요.
+길에서 꽃을 보았지만, 할머니를 먼저 뵈러 가야 한다고 생각했어요.
+
+"예쁜 꽃이지만, 나중에 따도 돼. 지금은 할머니가 더 중요해."
+빨간 모자가 말했어요.
+
+할머니 집에 도착했을 때, 빨간 모자는 할머니가 이상해 보인다는 것을 알았어요.
+하지만 할머니를 배려하며 조심스럽게 행동했어요.
+
+부모님과 아이가 함께 이야기해볼 수 있어요:
+"빨간 모자는 왜 꽃을 나중에 따기로 했을까요?"
+"우리는 어떤 일을 먼저 해야 할까요?"
+"다른 사람을 배려한다는 것은 무엇일까요?"`,
+
+                cinderella: `신데렐라
+
+옛날에 착하고 친절한 소녀가 있었어요.
+그녀의 이름은 신데렐라였어요.
+
+신데렐라는 새 엄마와 두 언니와 함께 살았어요.
+하지만 그들은 신데렐라를 잘 대해주지 않았어요.
+
+신데렐라는 항상 집안일을 도와야 했지만,
+그래도 불평하지 않고 친절하게 행동했어요.
+
+"화가 나도 친절하게 대하는 것이 중요해."
+신데렐라가 생각했어요.
+
+어느 날, 왕자님의 무도회가 열렸어요.
+신데렐라는 갈 수 없었지만, 마법의 요정이 도와주었어요.
+
+무도회에서 신데렐라는 왕자님과 춤을 췄어요.
+그녀의 친절함과 용기가 왕자님의 마음을 움직였어요.
+
+부모님과 아이가 함께 생각해볼 수 있어요:
+"신데렐라는 왜 친절하게 행동했을까요?"
+"친절함은 왜 중요할까요?"
+"우리도 친절하게 행동할 수 있는 방법은 무엇일까요?"`,
+
+                snowwhite: `백설공주
+
+옛날에 아름답고 친절한 공주가 있었어요.
+그녀의 이름은 백설공주였어요.
+
+백설공주는 나쁜 왕비 때문에 숲으로 도망쳐야 했어요.
+숲에서 그녀는 일곱 난장이를 만났어요.
+
+"우리 집에서 함께 살 수 있어요." 난장이들이 말했어요.
+백설공주는 고마워하며 함께 살기로 했어요.
+
+백설공주는 난장이들을 위해 요리를 하고 집을 깨끗이 했어요.
+난장이들은 백설공주를 친구처럼 대해주었어요.
+
+"함께 있으면 외롭지 않아." 백설공주가 말했어요.
+"맞아! 친구가 있으면 모든 일이 더 즐거워." 난장이들이 대답했어요.
+
+그들은 서로를 도와주고 배려하며 행복하게 살았어요.
+
+부모님과 아이가 함께 이야기해볼 수 있어요:
+"백설공주와 난장이들은 왜 친구가 될 수 있었을까요?"
+"친구를 배려한다는 것은 무엇일까요?"
+"우리는 친구에게 어떻게 친절하게 대할 수 있을까요?"`,
+
+                uglyduckling: `미운 오리 새끼
+
+옛날에 한 마리의 오리 새끼가 있었어요.
+그 오리 새끼는 다른 오리들과 달랐어요.
+
+다른 오리들은 그를 놀렸어요.
+"너는 못생겼어!" "너는 우리와 달라!"
+
+오리 새끼는 슬펐어요.
+"나는 왜 다른 것처럼 보일까?" 오리 새끼가 생각했어요.
+
+하지만 시간이 지나면서 오리 새끼는 자랐어요.
+그리고 아름다운 백조가 되었어요!
+
+"나는 특별했구나!" 백조가 깨달았어요.
+"다른 것처럼 보였지만, 나는 나만의 아름다움이 있었어."
+
+부모님과 아이가 함께 생각해볼 수 있어요:
+"오리 새끼는 왜 슬펐을까요?"
+"모든 사람은 다르지만 소중하다는 것을 어떻게 알 수 있을까요?"
+"우리도 자신만의 특별함이 있다는 것을 어떻게 알 수 있을까요?"`
+            },
+            child: {
+                lion: `사자와 쥐
+
+어느 날, 큰 사자가 숲에서 잠을 자고 있었어요.
+작은 쥐가 사자 위를 뛰어다녔어요.
+
+사자가 깨어나서 화가 났어요.
+"작은 쥐야! 내가 너를 잡아먹겠어!"
+
+쥐가 간청했어요:
+"제발 저를 살려주세요! 나중에 제가 도와드릴게요."
+
+사자는 웃었어요:
+"작은 네가 나를 도와? 하하하!"
+
+하지만 사자는 쥐를 놓아주었어요.
+
+나중에 사자가 사냥꾼의 그물에 걸렸어요.
+작은 쥐가 나타나서 그물을 갉아서 사자를 구해주었어요.
+
+"작은 친구도 소중해!" 사자가 깨달았어요.
+"고마워, 작은 친구야!" 사자가 말했어요.
+
+작은 쥐도 기뻐했어요:
+"작은 나도 큰 도움이 될 수 있어요!"`,
+
+                tortoise: `토끼와 거북이
+
+옛날에 빠른 토끼와 느린 거북이가 있었어요.
+그들은 누가 더 빠른지 경주를 하기로 했어요.
+
+"나는 너무 빨라서 쉽게 이길 거야!" 토끼가 말했어요.
+거북이는 조용히 말했어요:
+"꾸준히 가면 이길 수 있어요."
+
+경주가 시작되었어요.
+토끼는 매우 빨리 달렸어요. 거북이는 천천히 걸었어요.
+
+토끼는 거북이가 너무 느리다고 생각했어요.
+그래서 나무 아래에서 잠을 잤어요.
+
+"거북이는 아직 멀었을 거야. 잠깐만 자도 돼."
+토끼가 생각했어요.
+
+하지만 거북이는 계속 걸었어요.
+천천히, 하지만 꾸준히.
+
+토끼가 깨어났을 때, 거북이는 이미 결승선에 도착했어요!
+
+"꾸준함이 이겼어요!" 거북이가 말했어요.
+"천천히 가도 꾸준히 가면 목표에 도달할 수 있어요!"`,
+
+                ant: `개미와 베짱이
+
+여름이었어요.
+개미는 열심히 일했어요. 먹이를 모으고, 집을 만들었어요.
+
+베짱이는 노래하고 놀았어요.
+"여름에는 놀아야 해! 일은 나중에 해도 돼!"
+
+개미가 말했어요:
+"겨울을 대비해서 지금 일해야 해요."
+
+베짱이는 웃었어요:
+"겨울은 아직 멀었어! 지금은 놀아야 해!"
+
+겨울이 왔어요.
+개미는 따뜻한 집에서 충분한 먹이를 가지고 있었어요.
+
+베짱이는 배가 고팠어요.
+"개미야, 먹이를 좀 나눠줄 수 있을까?"
+
+개미가 물었어요:
+"여름에 왜 일하지 않았어요?"
+
+베짱이는 후회했어요:
+"지금 알았어요. 노력하는 것이 중요하다는 것을."
+
+개미는 베짱이에게 먹이를 나눠주었어요:
+"다음 여름에는 함께 일하자. 노력하면 좋은 결과가 있어요."`,
+
+                boy: `양치기 소년
+
+옛날에 양을 지키는 소년이 있었어요.
+그는 재미있어 보이기 위해 거짓말을 했어요.
+
+"늑대야! 늑대가 나타났어!" 소년이 소리쳤어요.
+마을 사람들이 달려왔어요. 하지만 늑대는 없었어요.
+
+소년은 웃었어요:
+"장난이었어! 하하하!"
+
+다음 날, 소년이 또 소리쳤어요:
+"늑대야! 늑대가 나타났어!"
+
+마을 사람들이 또 달려왔어요. 하지만 또 늑대는 없었어요.
+
+"또 장난이었어!" 소년이 웃었어요.
+
+진짜 늑대가 나타났어요!
+소년이 소리쳤어요:
+"늑대야! 정말로 늑대가 나타났어!"
+
+하지만 아무도 오지 않았어요.
+"또 장난일 거야." 마을 사람들이 생각했어요.
+
+소년은 후회했어요:
+"정직하게 말하는 것이 중요하다는 것을 이제 알았어요."
+
+정직함은 정말 중요해요.
+거짓말을 하면 나중에 아무도 믿어주지 않아요.`,
+
+                hare: `토끼의 재판
+
+숲에서 사과가 사라졌어요.
+모든 동물들이 모였어요.
+
+"누가 사과를 훔쳤을까?" 사자가 물었어요.
+
+토끼가 말했어요:
+"모두 공정하게 재판을 받아야 해요. 
+누구도 특별 대우를 받으면 안 돼요."
+
+여우가 말했어요:
+"맞아요! 공정함이 중요해요."
+
+모든 동물이 차례로 증언했어요.
+토끼는 모두의 말을 공정하게 들어주었어요.
+
+마침내 진실을 찾았어요.
+사과를 훔친 동물이 자백했어요.
+
+"공정하게 대하니까 진실을 알 수 있었어요."
+토끼가 말했어요.
+
+"모두가 공정하게 대우받을 권리가 있어요.
+그래야 모두가 행복할 수 있어요."`,
+
+                fox: `여우와 포도
+
+어느 여름 날, 여우가 배가 고팠어요.
+포도밭을 지나가다가 포도송이를 발견했어요.
+
+"와! 맛있는 포도다!" 여우가 생각했어요.
+
+여우는 포도를 따려고 뛰어올랐어요.
+하지만 포도는 너무 높았어요.
+
+다시 뛰어올랐어요. 또 실패했어요.
+또 뛰어올랐어요. 또 실패했어요.
+
+여우는 포기하고 싶었어요.
+하지만 다시 생각했어요:
+"포기하지 말자. 다른 방법을 찾아보자."
+
+여우는 돌을 쌓아서 올라갔어요.
+그리고 드디어 포도를 따 먹을 수 있었어요!
+
+"포기하지 않아서 성공했어요!" 여우가 기뻐했어요.
+"어려워도 포기하지 않으면 해낼 수 있어요!"`
+            }
+        };
 
         // 음성 목록 로드
         function loadVoices() {
@@ -404,9 +984,7 @@
             
             const currentLang = languageSelect.value;
             let preferredVoiceIndex = null;
-            let preferredVoiceName = '';
             
-            // 한국어의 경우 더 자연스러운 음성을 우선 선택 (Neural, Premium, Enhanced 우선)
             const preferredNames = ['Neural', 'Premium', 'Enhanced', 'Natural', 'WaveNet', 'Yuna', 'Sora', 'Nara', 'Nayeon', 'Female', '여성', 'Google', 'Microsoft'];
             
             voices.forEach((voice, index) => {
@@ -416,14 +994,11 @@
                     option.textContent = `${voice.name} (${voice.lang})`;
                     voiceSelect.appendChild(option);
                     
-                    // 더 자연스러운 음성 자동 선택 (우선순위: Neural > Premium > Enhanced > Natural)
                     if (preferredVoiceIndex === null) {
                         const voiceNameLower = voice.name.toLowerCase();
-                        // 우선순위에 따라 선택
                         for (let i = 0; i < preferredNames.length; i++) {
                             if (voiceNameLower.includes(preferredNames[i].toLowerCase())) {
                                 preferredVoiceIndex = index;
-                                preferredVoiceName = voice.name;
                                 break;
                             }
                         }
@@ -431,7 +1006,6 @@
                 }
             });
             
-            // 부드러운 음성을 찾지 못했으면 첫 번째 한국어 음성 선택
             if (preferredVoiceIndex === null && voices.length > 0) {
                 for (let i = 0; i < voices.length; i++) {
                     if (voices[i].lang.startsWith(currentLang.split('-')[0])) {
@@ -441,30 +1015,27 @@
                 }
             }
             
-            // 자동으로 부드러운 음성 선택
             if (preferredVoiceIndex !== null) {
                 voiceSelect.value = preferredVoiceIndex;
             }
         }
 
-        // 페이지 로드 시 음성 목록 로드
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = loadVoices;
         }
         loadVoices();
 
-        // 언어 변경 시 음성 목록 업데이트
         languageSelect.addEventListener('change', loadVoices);
 
-        // 속도 표시 업데이트
         speedRange.addEventListener('input', (e) => {
             speedDisplay.textContent = parseFloat(e.target.value).toFixed(1) + 'x';
+            if (utterance) {
+                utterance.rate = parseFloat(e.target.value);
+            }
         });
         
-        // 초기 속도 표시
         speedDisplay.textContent = '0.9x';
 
-        // 탭 전환
         function showTab(tabName) {
             currentTab = tabName;
             document.querySelectorAll('.tab-content').forEach(tab => {
@@ -477,7 +1048,6 @@
             event.target.classList.add('active');
         }
 
-        // 글자 수 카운트
         textInput.addEventListener('input', (e) => {
             charCount.textContent = e.target.value.length;
         });
@@ -486,7 +1056,14 @@
             charCountChild.textContent = e.target.value.length;
         });
 
-        // 읽기 시작
+        function updateProgress() {
+            if (!utterance || !startTime) return;
+            
+            const elapsed = (Date.now() - startTime) / 1000;
+            const progress = totalDuration > 0 ? Math.min((elapsed / totalDuration) * 100, 100) : 0;
+            progressFill.style.width = progress + '%';
+        }
+
         playBtn.addEventListener('click', () => {
             const activeTextarea = currentTab === 'parent' ? textInput : textInputChild;
             const text = activeTextarea.value.trim();
@@ -501,248 +1078,105 @@
 
             utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = languageSelect.value;
-            utterance.rate = Math.max(0.8, parseFloat(speedRange.value) * 0.95); // 약간 느리게 (더 자연스럽게)
-            utterance.pitch = 0.75; // 중간 톤 (너무 낮지 않게)
-            utterance.volume = 1.0; // 최대 볼륨
+            utterance.rate = parseFloat(speedRange.value);
+            utterance.pitch = 0.75;
+            utterance.volume = 1.0;
 
-            // 음성 선택
             const selectedVoiceIndex = voiceSelect.value;
             if (selectedVoiceIndex !== '') {
                 utterance.voice = voices[selectedVoiceIndex];
             }
 
+            // 대략적인 읽기 시간 계산 (초당 평균 3글자)
+            totalDuration = text.length / (3 * utterance.rate);
+            startTime = Date.now();
+
             utterance.onstart = () => {
-                status.textContent = '읽는 중...';
+                status.textContent = '📖 읽는 중...';
                 status.className = 'status playing';
                 playBtn.disabled = true;
                 pauseBtn.disabled = false;
                 stopBtn.disabled = false;
+                progressContainer.classList.add('active');
+                progressFill.style.width = '0%';
             };
 
             utterance.onend = () => {
-                status.textContent = '읽기 완료';
+                status.textContent = '✅ 읽기 완료';
                 status.className = 'status stopped';
                 playBtn.disabled = false;
                 pauseBtn.disabled = true;
                 stopBtn.disabled = true;
+                progressContainer.classList.remove('active');
+                progressFill.style.width = '100%';
+                startTime = null;
             };
 
             utterance.onerror = (event) => {
-                status.textContent = '오류 발생: ' + event.error;
+                status.textContent = '❌ 오류 발생: ' + event.error;
                 status.className = 'status stopped';
                 playBtn.disabled = false;
                 pauseBtn.disabled = true;
                 stopBtn.disabled = true;
+                progressContainer.classList.remove('active');
+                startTime = null;
             };
 
             synth.speak(utterance);
+            
+            // 진행 상황 업데이트
+            const progressInterval = setInterval(() => {
+                if (!synth.speaking && !synth.paused) {
+                    clearInterval(progressInterval);
+                } else {
+                    updateProgress();
+                }
+            }, 100);
         });
 
-        // 일시정지
         pauseBtn.addEventListener('click', () => {
             if (synth.speaking && !synth.paused) {
                 synth.pause();
-                status.textContent = '일시정지됨';
+                status.textContent = '⏸️ 일시정지됨';
                 pauseBtn.textContent = '▶️ 재개';
             } else if (synth.paused) {
                 synth.resume();
-                status.textContent = '읽는 중...';
+                startTime = Date.now() - ((progressFill.style.width.replace('%', '') / 100) * totalDuration * 1000);
+                status.textContent = '📖 읽는 중...';
                 pauseBtn.textContent = '⏸️ 일시정지';
             }
         });
 
-        // 중지
         stopBtn.addEventListener('click', () => {
             synth.cancel();
-            status.textContent = '중지됨';
+            status.textContent = '⏹️ 중지됨';
             status.className = 'status stopped';
             playBtn.disabled = false;
             pauseBtn.disabled = true;
             stopBtn.disabled = true;
             pauseBtn.textContent = '⏸️ 일시정지';
+            progressContainer.classList.remove('active');
+            progressFill.style.width = '0%';
+            startTime = null;
         });
 
-        // 부모와 함께 섹션 예시 텍스트
-        function loadExample(type) {
-            const examples = {
-                parent_emotion: `오늘 하루 어떤 일이 있었나요? 기분이 어땠나요? 
-함께 이야기해볼까요? 
-"지금 어떤 기분이야?"라고 물어보면 아이는 자신의 감정을 표현할 수 있습니다. 
-아이가 "화가 났어"라고 말하면, "왜 화가 났는지 이야기해볼까?"라고 함께 생각해보세요. 
-감정을 표현하는 것은 좋은 일이라는 것을 알려주세요. 
-부모와 아이가 함께 감정에 대해 이야기하면 더 가까워질 수 있습니다.`,
-
-                parent_communication: `함께 이야기하는 시간을 가져봐요. 
-아이가 말할 때는 끝까지 들어주세요. 
-"그래서 어떻게 됐어?" "그때 기분이 어땠어?"처럼 질문을 해보세요. 
-아이의 이야기에 공감하며 "그랬구나", "이해해"라고 말해주세요. 
-함께 대화하면서 서로를 더 잘 이해할 수 있습니다. 
-오늘 하루 가장 좋았던 일과 힘들었던 일을 함께 나눠보는 것도 좋아요.`,
-
-                parent_problem: `문제가 생겼을 때 함께 해결해봐요. 
-"이 문제를 어떻게 해결할 수 있을까?"라고 함께 생각해보세요. 
-아이의 아이디어를 들어보고, 부모의 생각도 함께 나눠보세요. 
-"이 방법은 어떨까?" "다른 방법도 있을까?"라고 물어보며 
-여러 해결 방법을 함께 찾아보세요. 
-함께 문제를 해결하면 아이는 자신감을 갖게 되고, 
-부모와의 관계도 더 돈독해집니다.`,
-
-                parent_bonding: `함께 시간을 보내는 것은 정말 중요해요. 
-함께 책을 읽거나, 그림을 그리거나, 요리를 해볼 수 있어요. 
-"오늘 뭐 하고 싶어?"라고 아이에게 물어보세요. 
-함께 하는 활동을 통해 서로를 더 잘 알 수 있습니다. 
-아이와 함께 웃고, 놀고, 이야기하는 시간이 
-가장 소중한 선물입니다. 
-작은 순간들도 함께하면 특별해집니다.`,
-
-                parent_rules: `규칙을 함께 정해봐요. 
-"우리 집에서 지켜야 할 규칙이 뭐가 있을까?"라고 물어보세요. 
-아이의 의견도 들어보고, 부모의 생각도 함께 나눠보세요. 
-규칙을 정할 때는 왜 그 규칙이 필요한지 함께 이야기해보세요. 
-규칙을 지켰을 때는 칭찬해주고, 
-규칙을 어겼을 때는 왜 어겼는지 함께 생각해보세요. 
-함께 정한 규칙은 더 잘 지켜질 수 있어요.`,
-
-                parent_praise: `칭찬은 구체적으로 해주세요. 
-"잘했어"보다는 "열심히 했구나", "친구를 도와줘서 고마워"처럼 
-구체적으로 말해주면 아이는 무엇을 잘했는지 알 수 있어요. 
-작은 것도 칭찬해주세요. 
-아이가 노력한 모습을 보면 그 자체만으로도 칭찬할 만해요. 
-칭찬을 받으면 아이는 자신감을 갖게 되고, 
-더 좋은 행동을 하려고 노력하게 됩니다.`,
-
-                parent_conflict: `갈등이 생겼을 때는 함께 해결해봐요. 
-"왜 싸웠는지 이야기해볼까?"라고 물어보세요. 
-누가 잘못했는지 찾기보다는, 어떻게 해결할 수 있을지 함께 생각해보세요. 
-"다음에는 어떻게 하면 좋을까?"라고 물어보며 
-더 나은 방법을 함께 찾아보세요. 
-갈등을 해결하는 과정에서 아이는 배울 수 있어요. 
-함께 해결하면 더 좋은 관계를 만들 수 있습니다.`,
-
-                parent_empathy: `아이의 마음을 이해하려고 노력해봐요. 
-"지금 기분이 어때?" "어떤 생각이 들어?"라고 물어보세요. 
-아이의 감정을 인정해주고, 공감해주세요. 
-"그랬구나", "힘들었겠다"라고 말해주면 아이는 안심됩니다. 
-아이의 입장에서 생각해보는 것도 중요해요. 
-공감을 받으면 아이는 자신의 감정을 더 잘 이해할 수 있고, 
-다른 사람의 감정도 이해할 수 있게 됩니다.`,
-
-                parent_limits: `경계를 설정하는 것도 사랑이에요. 
-"지금은 안 돼"라고 말할 때는 왜 안 되는지 설명해주세요. 
-아이가 원하는 것을 모두 들어주는 것이 좋은 부모는 아니에요. 
-명확하고 일관된 경계는 아이에게 안정감을 줍니다. 
-경계를 설정할 때는 따뜻하지만 확실하게 말해주세요. 
-"지금은 안 되지만, 나중에는 할 수 있어"라고 말하면 
-아이는 이해할 수 있어요.`,
-
-                parent_gratitude: `감사를 표현하는 것을 함께 배워봐요. 
-"오늘 고마웠던 일이 뭐가 있었나요?"라고 물어보세요. 
-작은 것도 감사할 수 있다는 것을 알려주세요. 
-함께 감사 일기를 써보는 것도 좋아요. 
-감사를 표현하면 기분이 좋아지고, 
-긍정적인 생각을 할 수 있게 됩니다. 
-"고마워"라는 말 한마디도 큰 의미가 있어요. 
-함께 감사하는 습관을 기르면 더 행복해질 수 있어요.`
-            };
-
-            textInput.value = examples[type] || '';
-            charCount.textContent = textInput.value.length;
+        function loadBook(tab, bookKey) {
+            const activeTextarea = tab === 'parent' ? textInput : textInputChild;
+            const charCounter = tab === 'parent' ? charCount : charCountChild;
+            
+            if (books[tab] && books[tab][bookKey]) {
+                activeTextarea.value = books[tab][bookKey];
+                charCounter.textContent = activeTextarea.value.length;
+                
+                // 해당 탭으로 전환
+                if (currentTab !== tab) {
+                    showTab(tab);
+                }
+            }
         }
 
-        // 아이를 위한 섹션 예시 텍스트
-        function loadExampleChild(type) {
-            const examples = {
-                child_feelings: `나는 어떤 감정을 느낄 수 있을까요? 
-기쁨, 슬픔, 화남, 두려움, 놀람... 
-모든 감정은 괜찮아요. 
-화가 날 때는 깊게 숨을 쉬어보세요. 
-슬플 때는 엄마나 아빠에게 이야기해볼 수 있어요. 
-감정은 나쁜 것이 아니에요. 
-내가 어떤 감정을 느끼는지 알아보는 것도 중요해요. 
-감정을 표현하는 것은 용기 있는 일이에요.`,
-
-                child_friends: `친구와 함께하는 것은 정말 즐거워요. 
-친구와 함께 놀 때는 서로 배려하는 것이 중요해요. 
-친구가 슬퍼하면 위로해주고, 
-친구가 기뻐하면 함께 기뻐해요. 
-친구와 싸웠을 때는 "미안해"라고 말할 수 있어요. 
-친구를 이해하고 존중하는 것이 중요해요. 
-함께 있으면 더 즐거워요.`,
-
-                child_brave: `용기는 무서운 일이 없어서가 아니라, 
-무서워도 해내는 것이에요. 
-새로운 것을 시도하는 것도 용기예요. 
-실수해도 괜찮아요. 
-다시 시도하면 되니까요. 
-용기를 내면 할 수 있는 일이 많아져요. 
-작은 용기부터 시작해보세요. 
-나도 용기 있는 사람이 될 수 있어요.`,
-
-                child_kind: `친절하게 대하는 것은 정말 좋은 일이에요. 
-친구에게 친절하게 말하면 친구도 기뻐해요. 
-도와주는 것도 친절한 일이에요. 
-"고마워"라고 말하는 것도 친절해요. 
-작은 친절도 큰 의미가 있어요. 
-친절하게 대하면 나도 기분이 좋아져요. 
-세상은 친절한 사람들로 더 아름다워져요.`,
-
-                child_sharing: `나누는 것은 정말 좋은 일이에요. 
-장난감을 나누면 친구도 기뻐해요. 
-음식을 나누면 더 맛있어 보여요. 
-나의 것을 나누면 나도 기분이 좋아져요. 
-나누는 것은 사랑을 표현하는 방법이에요. 
-작은 것도 나누면 큰 기쁨이 됩니다. 
-함께 나누면 더 즐거워요.`,
-
-                child_sorry: `미안하다고 말하는 것은 용기 있는 일이에요. 
-실수했을 때는 "미안해"라고 말할 수 있어요. 
-미안하다고 말하면 마음이 편해져요. 
-미안하다고 말하면 친구도 나를 용서해줄 거예요. 
-미안하다고 말하는 것은 나쁜 일이 아니에요. 
-용감한 일이에요. 
-미안하다고 말하고 다시 좋은 친구가 될 수 있어요.`,
-
-                child_different: `모든 사람은 다르지만 모두 소중해요. 
-친구와 나는 다를 수 있어요. 
-다른 것은 나쁜 것이 아니에요. 
-다른 것은 특별한 것이에요. 
-다른 친구를 이해하고 존중하는 것이 중요해요. 
-다른 친구와 함께하면 더 재미있어요. 
-모두 다르지만 모두 소중한 친구예요.`,
-
-                child_patience: `기다리는 것은 어렵지만 배울 수 있어요. 
-기다릴 때는 심호흡을 해보세요. 
-기다리는 동안 다른 것을 생각해볼 수 있어요. 
-기다리는 것은 인내심을 기르는 좋은 방법이에요. 
-조금만 기다리면 좋은 일이 생길 거예요. 
-기다리는 것도 연습이에요. 
-조금씩 기다리는 연습을 하면 더 잘할 수 있어요.`,
-
-                child_help: `도와주는 것은 정말 좋은 일이에요. 
-친구가 도움이 필요할 때 도와줄 수 있어요. 
-엄마 아빠가 바쁠 때도 도와줄 수 있어요. 
-도와주면 나도 기분이 좋아져요. 
-작은 도움도 큰 의미가 있어요. 
-도와주는 것은 친절한 마음을 표현하는 것이에요. 
-함께 도와주면 더 즐거워요.`,
-
-                child_love: `사랑을 표현하는 것은 정말 좋아요. 
-엄마 아빠에게 "사랑해"라고 말할 수 있어요. 
-친구에게도 친절하게 대하는 것이 사랑이에요. 
-포옹하는 것도 사랑을 표현하는 방법이에요. 
-사랑을 받으면 기분이 좋아져요. 
-사랑을 주면 나도 기분이 좋아져요. 
-사랑은 세상에서 가장 아름다운 것이에요.`
-            };
-
-            textInputChild.value = examples[type] || '';
-            charCountChild.textContent = textInputChild.value.length;
-        }
-
-        // 초기 글자 수 표시
         charCount.textContent = textInput.value.length;
         charCountChild.textContent = textInputChild.value.length;
     </script>
 </body>
 </html>
-
