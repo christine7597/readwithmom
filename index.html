@@ -221,6 +221,45 @@
             font-size: 0.9em;
             margin-top: 5px;
         }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #ff9a9e;
+            border-color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -231,11 +270,46 @@
         </div>
 
         <div class="main-card">
-            <div class="form-group">
-                <label for="textInput">아동심리 도움책 텍스트를 입력하세요</label>
-                <textarea id="textInput" placeholder="아이를 위한 심리학 관련 책, 글, 또는 도움 콘텐츠를 입력하세요...&#10;&#10;예: 아이들의 감정을 이해하고 표현하는 것은 매우 중요합니다. 아이가 슬프거나 화가 났을 때, 그 감정을 인정해주고 함께 이야기해보세요."></textarea>
-                <div class="char-count">
-                    <span id="charCount">0</span> 글자
+            <div class="tabs">
+                <button class="tab-btn active" onclick="showTab('parent')">👨‍👩‍👧 부모와 함께</button>
+                <button class="tab-btn" onclick="showTab('child')">👶 아이를 위한</button>
+            </div>
+
+            <!-- 부모와 함께 섹션 -->
+            <div id="parent" class="tab-content active">
+                <div class="form-group">
+                    <label for="textInput">부모와 아이가 함께 소통하며 읽을 내용을 입력하세요</label>
+                    <textarea id="textInput" placeholder="부모와 아이가 함께 읽고 대화할 수 있는 내용을 입력하세요...&#10;&#10;예: 오늘 하루 어떤 일이 있었나요? 기분이 어땠나요? 함께 이야기해볼까요?"></textarea>
+                    <div class="char-count">
+                        <span id="charCount">0</span> 글자
+                    </div>
+                </div>
+
+                <div class="example-texts">
+                    <h3>📖 부모와 함께 읽기 예시</h3>
+                    <button class="example-btn" onclick="loadExample('parent_emotion')">감정 대화하기</button>
+                    <button class="example-btn" onclick="loadExample('parent_communication')">소통 연습</button>
+                    <button class="example-btn" onclick="loadExample('parent_problem')">문제 해결하기</button>
+                    <button class="example-btn" onclick="loadExample('parent_bonding')">관계 쌓기</button>
+                </div>
+            </div>
+
+            <!-- 아이를 위한 섹션 -->
+            <div id="child" class="tab-content">
+                <div class="form-group">
+                    <label for="textInputChild">아이에게 읽어주며 혼자 성찰할 수 있는 내용을 입력하세요</label>
+                    <textarea id="textInputChild" placeholder="아이에게 읽어주면서 아이가 스스로 생각해볼 수 있는 내용을 입력하세요...&#10;&#10;예: 나는 어떤 감정을 느낄 수 있을까요? 화가 날 때는 어떻게 하면 좋을까요?"></textarea>
+                    <div class="char-count">
+                        <span id="charCountChild">0</span> 글자
+                    </div>
+                </div>
+
+                <div class="example-texts">
+                    <h3>📖 아이를 위한 읽기 예시</h3>
+                    <button class="example-btn" onclick="loadExampleChild('child_feelings')">내 감정 알아보기</button>
+                    <button class="example-btn" onclick="loadExampleChild('child_friends')">친구와 함께하기</button>
+                    <button class="example-btn" onclick="loadExampleChild('child_brave')">용기 내기</button>
+                    <button class="example-btn" onclick="loadExampleChild('child_kind')">친절하게 대하기</button>
                 </div>
             </div>
 
@@ -291,6 +365,7 @@
 
     <script>
         const textInput = document.getElementById('textInput');
+        const textInputChild = document.getElementById('textInputChild');
         const languageSelect = document.getElementById('languageSelect');
         const voiceSelect = document.getElementById('voiceSelect');
         const speedRange = document.getElementById('speedRange');
@@ -300,6 +375,8 @@
         const stopBtn = document.getElementById('stopBtn');
         const status = document.getElementById('status');
         const charCount = document.getElementById('charCount');
+        const charCountChild = document.getElementById('charCountChild');
+        let currentTab = 'parent';
 
         let synth = window.speechSynthesis;
         let utterance = null;
@@ -368,14 +445,32 @@
         // 초기 속도 표시
         speedDisplay.textContent = '0.6x';
 
+        // 탭 전환
+        function showTab(tabName) {
+            currentTab = tabName;
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
         // 글자 수 카운트
         textInput.addEventListener('input', (e) => {
             charCount.textContent = e.target.value.length;
         });
 
+        textInputChild.addEventListener('input', (e) => {
+            charCountChild.textContent = e.target.value.length;
+        });
+
         // 읽기 시작
         playBtn.addEventListener('click', () => {
-            const text = textInput.value.trim();
+            const activeTextarea = currentTab === 'parent' ? textInput : textInputChild;
+            const text = activeTextarea.value.trim();
             if (!text) {
                 alert('텍스트를 입력해주세요.');
                 return;
@@ -448,46 +543,89 @@
             pauseBtn.textContent = '⏸️ 일시정지';
         });
 
-        // 예시 텍스트 로드
+        // 부모와 함께 섹션 예시 텍스트
         function loadExample(type) {
             const examples = {
-                emotion: `아이들의 감정을 이해하고 표현하는 것은 매우 중요합니다. 
-아이가 슬프거나 화가 났을 때, 그 감정을 인정해주고 함께 이야기해보세요. 
-"지금 화가 났구나", "슬프구나"라고 말해주면 아이는 자신의 감정을 이해하게 됩니다. 
-감정은 나쁜 것이 아니며, 모든 감정은 괜찮다는 것을 아이에게 알려주세요. 
-아이가 감정을 표현할 수 있는 안전한 공간을 만들어주는 것이 중요합니다.`,
+                parent_emotion: `오늘 하루 어떤 일이 있었나요? 기분이 어땠나요? 
+함께 이야기해볼까요? 
+"지금 어떤 기분이야?"라고 물어보면 아이는 자신의 감정을 표현할 수 있습니다. 
+아이가 "화가 났어"라고 말하면, "왜 화가 났는지 이야기해볼까?"라고 함께 생각해보세요. 
+감정을 표현하는 것은 좋은 일이라는 것을 알려주세요. 
+부모와 아이가 함께 감정에 대해 이야기하면 더 가까워질 수 있습니다.`,
 
-                communication: `아이와 효과적으로 소통하려면 먼저 들어주는 것이 중요합니다. 
-아이가 말할 때는 중간에 끼어들지 말고 끝까지 들어주세요. 
-아이의 눈높이에 맞춰 앉아서 대화하면 더 잘 소통할 수 있습니다. 
-질문을 할 때는 "왜 그랬어?"보다는 "어떻게 생각해?"처럼 열린 질문을 하세요. 
-아이의 말에 공감하고 이해하려는 자세가 중요합니다.`,
+                parent_communication: `함께 이야기하는 시간을 가져봐요. 
+아이가 말할 때는 끝까지 들어주세요. 
+"그래서 어떻게 됐어?" "그때 기분이 어땠어?"처럼 질문을 해보세요. 
+아이의 이야기에 공감하며 "그랬구나", "이해해"라고 말해주세요. 
+함께 대화하면서 서로를 더 잘 이해할 수 있습니다. 
+오늘 하루 가장 좋았던 일과 힘들었던 일을 함께 나눠보는 것도 좋아요.`,
 
-                selfesteem: `아이의 자존감을 키우려면 먼저 아이를 있는 그대로 받아들여야 합니다. 
-아이가 잘한 일에 대해 구체적으로 칭찬해주세요. 
-"열심히 했구나", "도와줘서 고마워"처럼 행동을 칭찬하면 아이는 자신감을 갖게 됩니다. 
-아이가 실패했을 때도 함께 격려하고, 다음에는 더 잘할 수 있다고 믿어주세요. 
-아이가 자신의 의견을 표현할 수 있도록 기회를 주는 것도 중요합니다.`,
+                parent_problem: `문제가 생겼을 때 함께 해결해봐요. 
+"이 문제를 어떻게 해결할 수 있을까?"라고 함께 생각해보세요. 
+아이의 아이디어를 들어보고, 부모의 생각도 함께 나눠보세요. 
+"이 방법은 어떨까?" "다른 방법도 있을까?"라고 물어보며 
+여러 해결 방법을 함께 찾아보세요. 
+함께 문제를 해결하면 아이는 자신감을 갖게 되고, 
+부모와의 관계도 더 돈독해집니다.`,
 
-                behavior: `아이의 행동 뒤에는 항상 이유가 있습니다. 
-아이가 떼를 쓰거나 문제 행동을 할 때, 먼저 왜 그런 행동을 하는지 생각해보세요. 
-피곤하거나 배고프거나, 관심을 받고 싶어서일 수도 있습니다. 
-행동 자체를 비난하기보다는, 아이의 필요를 이해하려고 노력하세요. 
-명확하고 일관된 규칙을 정하고, 좋은 행동에는 긍정적으로 반응해주세요.`,
-
-                anxiety: `아이들도 불안을 느낄 수 있습니다. 
-새로운 환경이나 변화에 대해 불안해하는 것은 자연스러운 일입니다. 
-아이가 불안해할 때는 안심시켜주고, 함께 대처 방법을 찾아보세요. 
-깊게 숨을 들이쉬고 내쉬는 호흡 연습을 함께 해보는 것도 좋습니다. 
-아이의 불안이 너무 심하거나 오래 지속되면 전문가의 도움을 받는 것이 좋습니다.`
+                parent_bonding: `함께 시간을 보내는 것은 정말 중요해요. 
+함께 책을 읽거나, 그림을 그리거나, 요리를 해볼 수 있어요. 
+"오늘 뭐 하고 싶어?"라고 아이에게 물어보세요. 
+함께 하는 활동을 통해 서로를 더 잘 알 수 있습니다. 
+아이와 함께 웃고, 놀고, 이야기하는 시간이 
+가장 소중한 선물입니다. 
+작은 순간들도 함께하면 특별해집니다.`
             };
 
             textInput.value = examples[type] || '';
             charCount.textContent = textInput.value.length;
         }
 
+        // 아이를 위한 섹션 예시 텍스트
+        function loadExampleChild(type) {
+            const examples = {
+                child_feelings: `나는 어떤 감정을 느낄 수 있을까요? 
+기쁨, 슬픔, 화남, 두려움, 놀람... 
+모든 감정은 괜찮아요. 
+화가 날 때는 깊게 숨을 쉬어보세요. 
+슬플 때는 엄마나 아빠에게 이야기해볼 수 있어요. 
+감정은 나쁜 것이 아니에요. 
+내가 어떤 감정을 느끼는지 알아보는 것도 중요해요. 
+감정을 표현하는 것은 용기 있는 일이에요.`,
+
+                child_friends: `친구와 함께하는 것은 정말 즐거워요. 
+친구와 함께 놀 때는 서로 배려하는 것이 중요해요. 
+친구가 슬퍼하면 위로해주고, 
+친구가 기뻐하면 함께 기뻐해요. 
+친구와 싸웠을 때는 "미안해"라고 말할 수 있어요. 
+친구를 이해하고 존중하는 것이 중요해요. 
+함께 있으면 더 즐거워요.`,
+
+                child_brave: `용기는 무서운 일이 없어서가 아니라, 
+무서워도 해내는 것이에요. 
+새로운 것을 시도하는 것도 용기예요. 
+실수해도 괜찮아요. 
+다시 시도하면 되니까요. 
+용기를 내면 할 수 있는 일이 많아져요. 
+작은 용기부터 시작해보세요. 
+나도 용기 있는 사람이 될 수 있어요.`,
+
+                child_kind: `친절하게 대하는 것은 정말 좋은 일이에요. 
+친구에게 친절하게 말하면 친구도 기뻐해요. 
+도와주는 것도 친절한 일이에요. 
+"고마워"라고 말하는 것도 친절해요. 
+작은 친절도 큰 의미가 있어요. 
+친절하게 대하면 나도 기분이 좋아져요. 
+세상은 친절한 사람들로 더 아름다워져요.`
+            };
+
+            textInputChild.value = examples[type] || '';
+            charCountChild.textContent = textInputChild.value.length;
+        }
+
         // 초기 글자 수 표시
         charCount.textContent = textInput.value.length;
+        charCountChild.textContent = textInputChild.value.length;
     </script>
 </body>
 </html>
