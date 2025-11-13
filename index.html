@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReadWithMom - Voice Cloning Audiobook</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1em;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 200px;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-group label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        select, input[type="range"] {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .speed-display {
+            text-align: center;
+            color: #667eea;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .status.playing {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .status.stopped {
+            background: #f8f9fa;
+            color: #666;
+        }
+
+        .example-texts {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .example-texts h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .example-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 5px;
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .example-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .char-count {
+            text-align: right;
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 ReadWithMom</h1>
+            <p>Voice Cloning Audiobook - 텍스트를 음성으로 변환하는 오디오북</p>
+        </div>
+
+        <div class="main-card">
+            <div class="form-group">
+                <label for="textInput">읽을 텍스트를 입력하세요</label>
+                <textarea id="textInput" placeholder="여기에 읽고 싶은 텍스트를 입력하세요...&#10;&#10;예: 오늘은 좋은 날입니다. 이 오디오북 기능을 사용하면 텍스트를 음성으로 들을 수 있습니다."></textarea>
+                <div class="char-count">
+                    <span id="charCount">0</span> 글자
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>언어 선택</label>
+                    <select id="languageSelect">
+                        <option value="ko-KR">한국어</option>
+                        <option value="en-US">English (US)</option>
+                        <option value="en-GB">English (UK)</option>
+                        <option value="ja-JP">日本語</option>
+                        <option value="zh-CN">中文</option>
+                        <option value="es-ES">Español</option>
+                        <option value="fr-FR">Français</option>
+                        <option value="de-DE">Deutsch</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>음성 선택</label>
+                    <select id="voiceSelect">
+                        <option value="">기본 음성</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>읽기 속도</label>
+                    <input type="range" id="speedRange" min="0.5" max="2" step="0.1" value="1">
+                    <div class="speed-display" id="speedDisplay">1.0x</div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" id="playBtn">▶️ 읽기 시작</button>
+                <button class="btn btn-secondary" id="pauseBtn" disabled>⏸️ 일시정지</button>
+                <button class="btn btn-danger" id="stopBtn" disabled>⏹️ 중지</button>
+            </div>
+
+            <div class="status stopped" id="status">
+                준비됨
+            </div>
+
+            <div class="example-texts">
+                <h3>📖 예시 텍스트</h3>
+                <button class="example-btn" onclick="loadExample('korean')">한국어 예시</button>
+                <button class="example-btn" onclick="loadExample('english')">English Example</button>
+                <button class="example-btn" onclick="loadExample('story')">짧은 이야기</button>
+                <button class="example-btn" onclick="loadExample('psychology')">심리학 관련</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const textInput = document.getElementById('textInput');
+        const languageSelect = document.getElementById('languageSelect');
+        const voiceSelect = document.getElementById('voiceSelect');
+        const speedRange = document.getElementById('speedRange');
+        const speedDisplay = document.getElementById('speedDisplay');
+        const playBtn = document.getElementById('playBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const status = document.getElementById('status');
+        const charCount = document.getElementById('charCount');
+
+        let synth = window.speechSynthesis;
+        let utterance = null;
+        let voices = [];
+
+        // 음성 목록 로드
+        function loadVoices() {
+            voices = synth.getVoices();
+            voiceSelect.innerHTML = '<option value="">기본 음성</option>';
+            
+            const currentLang = languageSelect.value;
+            voices.forEach((voice, index) => {
+                if (voice.lang.startsWith(currentLang.split('-')[0])) {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = `${voice.name} (${voice.lang})`;
+                    voiceSelect.appendChild(option);
+                }
+            });
+        }
+
+        // 페이지 로드 시 음성 목록 로드
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = loadVoices;
+        }
+        loadVoices();
+
+        // 언어 변경 시 음성 목록 업데이트
+        languageSelect.addEventListener('change', loadVoices);
+
+        // 속도 표시 업데이트
+        speedRange.addEventListener('input', (e) => {
+            speedDisplay.textContent = parseFloat(e.target.value).toFixed(1) + 'x';
+        });
+
+        // 글자 수 카운트
+        textInput.addEventListener('input', (e) => {
+            charCount.textContent = e.target.value.length;
+        });
+
+        // 읽기 시작
+        playBtn.addEventListener('click', () => {
+            const text = textInput.value.trim();
+            if (!text) {
+                alert('텍스트를 입력해주세요.');
+                return;
+            }
+
+            if (synth.speaking && !synth.paused) {
+                synth.pause();
+            }
+
+            utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = languageSelect.value;
+            utterance.rate = parseFloat(speedRange.value);
+            utterance.pitch = 1;
+            utterance.volume = 1;
+
+            // 음성 선택
+            const selectedVoiceIndex = voiceSelect.value;
+            if (selectedVoiceIndex !== '') {
+                utterance.voice = voices[selectedVoiceIndex];
+            }
+
+            utterance.onstart = () => {
+                status.textContent = '읽는 중...';
+                status.className = 'status playing';
+                playBtn.disabled = true;
+                pauseBtn.disabled = false;
+                stopBtn.disabled = false;
+            };
+
+            utterance.onend = () => {
+                status.textContent = '읽기 완료';
+                status.className = 'status stopped';
+                playBtn.disabled = false;
+                pauseBtn.disabled = true;
+                stopBtn.disabled = true;
+            };
+
+            utterance.onerror = (event) => {
+                status.textContent = '오류 발생: ' + event.error;
+                status.className = 'status stopped';
+                playBtn.disabled = false;
+                pauseBtn.disabled = true;
+                stopBtn.disabled = true;
+            };
+
+            synth.speak(utterance);
+        });
+
+        // 일시정지
+        pauseBtn.addEventListener('click', () => {
+            if (synth.speaking && !synth.paused) {
+                synth.pause();
+                status.textContent = '일시정지됨';
+                pauseBtn.textContent = '▶️ 재개';
+            } else if (synth.paused) {
+                synth.resume();
+                status.textContent = '읽는 중...';
+                pauseBtn.textContent = '⏸️ 일시정지';
+            }
+        });
+
+        // 중지
+        stopBtn.addEventListener('click', () => {
+            synth.cancel();
+            status.textContent = '중지됨';
+            status.className = 'status stopped';
+            playBtn.disabled = false;
+            pauseBtn.disabled = true;
+            stopBtn.disabled = true;
+            pauseBtn.textContent = '⏸️ 일시정지';
+        });
+
+        // 예시 텍스트 로드
+        function loadExample(type) {
+            const examples = {
+                korean: `안녕하세요. ReadWithMom 오디오북 기능을 사용해보세요. 
+이 기능은 텍스트를 음성으로 변환하여 읽어줍니다. 
+책을 읽기 어려운 상황에서도 내용을 들을 수 있어 매우 유용합니다. 
+언어와 읽기 속도를 조절할 수 있어 자신에게 맞는 설정으로 사용할 수 있습니다.`,
+
+                english: `Hello! Welcome to ReadWithMom Audiobook. 
+This feature converts text to speech, making it easy to listen to content. 
+You can adjust the language and reading speed to suit your preferences. 
+It's perfect for when you want to listen instead of read.`,
+
+                story: `옛날 옛날에, 작은 마을에 할머니가 살고 있었습니다. 
+할머니는 매일 아침 일찍 일어나서 정원의 꽃들에게 물을 주었습니다. 
+어느 날, 할머니는 정원에서 반짝이는 작은 돌멩이를 발견했습니다. 
+그 돌멩이는 마법의 돌이었고, 할머니의 소원을 들어주었습니다. 
+할머니는 "모든 사람이 행복했으면 좋겠다"고 소원을 빌었고, 
+그 이후로 마을은 더욱 평화롭고 행복한 곳이 되었습니다.`,
+
+                psychology: `인지 행동 치료(CBT)는 심리 치료의 한 방법입니다. 
+이 치료법은 사람의 생각, 감정, 행동이 서로 연결되어 있다고 봅니다. 
+부정적인 생각 패턴을 인식하고 변화시킴으로써, 
+더 건강한 감정과 행동을 이끌어낼 수 있습니다. 
+CBT는 우울증, 불안장애 등 다양한 정신건강 문제에 효과적입니다.`
+            };
+
+            textInput.value = examples[type] || '';
+            charCount.textContent = textInput.value.length;
+        }
+
+        // 초기 글자 수 표시
+        charCount.textContent = textInput.value.length;
+    </script>
+</body>
+</html>
+
