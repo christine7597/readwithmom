@@ -1717,28 +1717,44 @@
             modal.id = 'conversationGuideModal';
             modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;';
             
-            // 닫기 함수 (전역으로 만들어서 접근 가능하게)
-            window.closeConversationGuideModal = function() {
+            // 닫기 함수 - 여러 방법으로 시도
+            function closeModal() {
                 const modalElement = document.getElementById('conversationGuideModal');
                 if (modalElement) {
+                    modalElement.style.display = 'none';
                     modalElement.remove();
                 }
-                delete window.closeConversationGuideModal;
-            };
+                // 다른 방법으로도 시도
+                const allModals = document.querySelectorAll('div[style*="position: fixed"][style*="z-index: 10000"]');
+                allModals.forEach(m => {
+                    if (m.id === 'conversationGuideModal' || m.querySelector('#conversationGuideModal')) {
+                        m.remove();
+                    }
+                });
+            }
+            
+            // 전역 함수로도 등록
+            window.closeConversationGuideModal = closeModal;
             
             // 배경 클릭 시 닫기
             modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    window.closeConversationGuideModal();
+                if (e.target === modal || e.target.id === 'conversationGuideModal') {
+                    closeModal();
                 }
             });
             
-            modal.innerHTML = `
-                <div style="background: white; border-radius: 20px; padding: 30px; max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative;">
-                    <button onclick="window.closeConversationGuideModal()" style="position: absolute; top: 15px; right: 15px; background: #dc3545; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 1.2em; z-index: 10001; font-weight: bold;">×</button>
-                    ${html}
-                </div>
-            `;
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = 'background: white; border-radius: 20px; padding: 30px; max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative;';
+            
+            const closeButton = document.createElement('button');
+            closeButton.textContent = '×';
+            closeButton.style.cssText = 'position: absolute; top: 15px; right: 15px; background: #dc3545; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 1.2em; z-index: 10001; font-weight: bold;';
+            closeButton.onclick = closeModal;
+            closeButton.addEventListener('click', closeModal);
+            
+            modalContent.innerHTML = html;
+            modalContent.insertBefore(closeButton, modalContent.firstChild);
+            modal.appendChild(modalContent);
             document.body.appendChild(modal);
         }
 
