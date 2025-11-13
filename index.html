@@ -341,10 +341,13 @@
                 </div>
 
                 <div class="control-group">
-                    <label>음성 선택</label>
+                    <label>음성 선택 (더 자연스러운 음성을 선택하세요)</label>
                     <select id="voiceSelect">
-                        <option value="">기본 음성</option>
+                        <option value="">자동 선택 (가장 자연스러운 음성)</option>
                     </select>
+                    <div class="info-text" style="font-size: 0.85em; color: #666; margin-top: 5px;">
+                        💡 Neural, Premium, Enhanced 음성이 더 자연스럽습니다
+                    </div>
                 </div>
 
                 <div class="control-group">
@@ -403,8 +406,8 @@
             let preferredVoiceIndex = null;
             let preferredVoiceName = '';
             
-            // 한국어의 경우 여성 음성을 우선 선택 (더 부드러운 음성 우선)
-            const preferredNames = ['Yuna', 'Sora', 'Nara', 'Nayeon', 'Female', '여성', 'Google', 'Microsoft', 'Neural'];
+            // 한국어의 경우 더 자연스러운 음성을 우선 선택 (Neural, Premium, Enhanced 우선)
+            const preferredNames = ['Neural', 'Premium', 'Enhanced', 'Natural', 'WaveNet', 'Yuna', 'Sora', 'Nara', 'Nayeon', 'Female', '여성', 'Google', 'Microsoft'];
             
             voices.forEach((voice, index) => {
                 if (voice.lang.startsWith(currentLang.split('-')[0])) {
@@ -413,12 +416,16 @@
                     option.textContent = `${voice.name} (${voice.lang})`;
                     voiceSelect.appendChild(option);
                     
-                    // 더 부드러운 음성 자동 선택
+                    // 더 자연스러운 음성 자동 선택 (우선순위: Neural > Premium > Enhanced > Natural)
                     if (preferredVoiceIndex === null) {
                         const voiceNameLower = voice.name.toLowerCase();
-                        if (preferredNames.some(name => voiceNameLower.includes(name.toLowerCase()))) {
-                            preferredVoiceIndex = index;
-                            preferredVoiceName = voice.name;
+                        // 우선순위에 따라 선택
+                        for (let i = 0; i < preferredNames.length; i++) {
+                            if (voiceNameLower.includes(preferredNames[i].toLowerCase())) {
+                                preferredVoiceIndex = index;
+                                preferredVoiceName = voice.name;
+                                break;
+                            }
                         }
                     }
                 }
@@ -494,9 +501,9 @@
 
             utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = languageSelect.value;
-            utterance.rate = parseFloat(speedRange.value); // 사용자가 설정한 속도 사용
-            utterance.pitch = 0.7; // 더 낮고 부드러운 톤 (엄마 목소리처럼)
-            utterance.volume = 0.95; // 약간 낮춰서 더 부드럽게
+            utterance.rate = Math.max(0.8, parseFloat(speedRange.value) * 0.95); // 약간 느리게 (더 자연스럽게)
+            utterance.pitch = 0.75; // 중간 톤 (너무 낮지 않게)
+            utterance.volume = 1.0; // 최대 볼륨
 
             // 음성 선택
             const selectedVoiceIndex = voiceSelect.value;
