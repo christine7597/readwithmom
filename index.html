@@ -611,7 +611,7 @@
                         <option value="">자동 선택 (가장 자연스러운 음성)</option>
                     </select>
                     <div class="info-text">
-                        💡 Neural, Premium, Enhanced 음성이 더 자연스럽습니다
+                        💡 다양한 한국어 음성 중 선택 가능합니다
                     </div>
                 </div>
 
@@ -1058,25 +1058,66 @@
             }
         };
 
-        // 음성 목록 로드 (한국어만)
+        // 음성 목록 로드 (한국어만, 다양화)
         function loadVoices() {
             voices = synth.getVoices();
             voiceSelect.innerHTML = '<option value="">기본 음성 (자동 선택)</option>';
             
             const currentLang = 'ko-KR';
             let preferredVoiceIndex = null;
+            let allKoreanVoices = [];
             
-            const preferredNames = ['Neural', 'Premium', 'Enhanced', 'Natural', 'WaveNet', 'Yuna', 'Sora', 'Nara', 'Nayeon', 'Female', '여성', 'Google', 'Microsoft'];
+            // 한국어 음성 우선순위 (더 다양하게)
+            const preferredNames = [
+                'Neural', 'Premium', 'Enhanced', 'Natural', 'WaveNet',
+                'Yuna', 'Sora', 'Nara', 'Nayeon', 'Female', '여성',
+                'Google', 'Microsoft', 'Samsung', 'Naver', 'Kakao',
+                '아름', '은하', '지은', '수진', '미래', '하늘',
+                'Korean', 'Korea', 'Seoul', '부드러운', '따뜻한', '친근한'
+            ];
             
+            // 모든 한국어 음성 수집
             voices.forEach((voice, index) => {
-                if (voice.lang.startsWith('ko') || voice.lang === 'ko-KR') {
+                if (voice.lang.startsWith('ko') || voice.lang === 'ko-KR' || voice.lang === 'ko') {
+                    allKoreanVoices.push({ voice, index });
+                    
                     const option = document.createElement('option');
                     option.value = index;
-                    option.textContent = `${voice.name} (${voice.lang})`;
+                    
+                    // 음성 이름에 우선순위 표시
+                    let displayName = voice.name;
+                    const voiceNameLower = voice.name.toLowerCase();
+                    
+                    // 우선순위가 높은 음성에 표시 추가
+                    let priority = '';
+                    for (let i = 0; i < preferredNames.length; i++) {
+                        if (voiceNameLower.includes(preferredNames[i].toLowerCase())) {
+                            if (i < 5) {
+                                priority = ' ⭐';
+                            } else if (i < 10) {
+                                priority = ' ✨';
+                            }
+                            break;
+                        }
+                    }
+                    
+                    // 성별 표시 추가
+                    let gender = '';
+                    if (voiceNameLower.includes('female') || voiceNameLower.includes('여성') || 
+                        voiceNameLower.includes('yuna') || voiceNameLower.includes('sora') ||
+                        voiceNameLower.includes('nara') || voiceNameLower.includes('nayeon') ||
+                        voiceNameLower.includes('아름') || voiceNameLower.includes('지은') ||
+                        voiceNameLower.includes('수진') || voiceNameLower.includes('미래')) {
+                        gender = ' 👩';
+                    } else if (voiceNameLower.includes('male') || voiceNameLower.includes('남성')) {
+                        gender = ' 👨';
+                    }
+                    
+                    option.textContent = `${displayName}${priority}${gender}`;
                     voiceSelect.appendChild(option);
                     
+                    // 첫 번째 우선순위 음성 선택
                     if (preferredVoiceIndex === null) {
-                        const voiceNameLower = voice.name.toLowerCase();
                         for (let i = 0; i < preferredNames.length; i++) {
                             if (voiceNameLower.includes(preferredNames[i].toLowerCase())) {
                                 preferredVoiceIndex = index;
@@ -1087,17 +1128,21 @@
                 }
             });
             
-            if (preferredVoiceIndex === null && voices.length > 0) {
-                for (let i = 0; i < voices.length; i++) {
-                    if (voices[i].lang.startsWith('ko') || voices[i].lang === 'ko-KR') {
-                        preferredVoiceIndex = i;
-                        break;
-                    }
-                }
+            // 우선순위 음성이 없으면 첫 번째 한국어 음성 선택
+            if (preferredVoiceIndex === null && allKoreanVoices.length > 0) {
+                preferredVoiceIndex = allKoreanVoices[0].index;
             }
             
             if (preferredVoiceIndex !== null) {
                 voiceSelect.value = preferredVoiceIndex;
+            }
+            
+            // 한국어 음성 개수 표시
+            if (allKoreanVoices.length > 0) {
+                const infoText = document.querySelector('.info-text');
+                if (infoText) {
+                    infoText.innerHTML = `💡 ${allKoreanVoices.length}개의 한국어 음성 중 선택 가능합니다. ⭐ 표시는 추천 음성입니다.`;
+                }
             }
         }
 
