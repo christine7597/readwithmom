@@ -606,15 +606,6 @@
 
             <div class="controls">
                 <div class="control-group">
-                    <label>🌍 언어 선택</label>
-                    <select id="languageSelect">
-                        <option value="ko-KR">한국어</option>
-                        <option value="en-US">English (US)</option>
-                        <option value="ja-JP">日本語</option>
-                    </select>
-                </div>
-
-                <div class="control-group">
                     <label>🎤 음성 선택</label>
                     <select id="voiceSelect">
                         <option value="">자동 선택 (가장 자연스러운 음성)</option>
@@ -628,6 +619,50 @@
                     <label>⚡ 읽기 속도</label>
                     <input type="range" id="speedRange" min="0.5" max="2" step="0.1" value="0.9">
                     <div class="speed-display" id="speedDisplay">0.9x</div>
+                </div>
+            </div>
+            
+            <!-- 유용한 기능들 -->
+            <div style="margin: 30px 0; padding: 25px; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border-radius: 20px; border: 2px solid #f0f0f0;">
+                <h3 style="margin-bottom: 20px; color: #333;">✨ 유용한 기능</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <button class="btn" onclick="saveBookmark()" style="background: #ffc107; color: #333; padding: 15px;">
+                        ⭐ 즐겨찾기 저장
+                    </button>
+                    <button class="btn" onclick="loadBookmarks()" style="background: #17a2b8; color: white; padding: 15px;">
+                        📚 즐겨찾기 보기
+                    </button>
+                    <button class="btn" onclick="saveText()" style="background: #28a745; color: white; padding: 15px;">
+                        💾 텍스트 저장
+                    </button>
+                    <button class="btn" onclick="loadSavedTexts()" style="background: #6f42c1; color: white; padding: 15px;">
+                        📖 저장된 텍스트
+                    </button>
+                    <button class="btn" onclick="showReadingHistory()" style="background: #fd7e14; color: white; padding: 15px;">
+                        📊 읽기 기록
+                    </button>
+                    <button class="btn" onclick="showConversationGuide()" style="background: #e83e8c; color: white; padding: 15px;">
+                        💬 대화 가이드
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 읽기 통계 -->
+            <div style="margin: 20px 0; padding: 20px; background: white; border-radius: 15px; border: 2px solid #ff9a9e;">
+                <h4 style="margin-bottom: 15px; color: #333;">📈 읽기 통계</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                    <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                        <div style="font-size: 2em; font-weight: bold; color: #ff9a9e;" id="totalReadings">0</div>
+                        <div style="color: #666; margin-top: 5px;">총 읽기 횟수</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                        <div style="font-size: 2em; font-weight: bold; color: #ff9a9e;" id="totalReadingTime">0분</div>
+                        <div style="color: #666; margin-top: 5px;">총 읽은 시간</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                        <div style="font-size: 2em; font-weight: bold; color: #ff9a9e;" id="totalCharacters">0</div>
+                        <div style="color: #666; margin-top: 5px;">총 읽은 글자</div>
+                    </div>
                 </div>
             </div>
 
@@ -702,7 +737,6 @@
     <script>
         const textInput = document.getElementById('textInput');
         const textInputChild = document.getElementById('textInputChild');
-        const languageSelect = document.getElementById('languageSelect');
         const voiceSelect = document.getElementById('voiceSelect');
         const speedRange = document.getElementById('speedRange');
         const speedDisplay = document.getElementById('speedDisplay');
@@ -1024,18 +1058,18 @@
             }
         };
 
-        // 음성 목록 로드
+        // 음성 목록 로드 (한국어만)
         function loadVoices() {
             voices = synth.getVoices();
             voiceSelect.innerHTML = '<option value="">기본 음성 (자동 선택)</option>';
             
-            const currentLang = languageSelect.value;
+            const currentLang = 'ko-KR';
             let preferredVoiceIndex = null;
             
             const preferredNames = ['Neural', 'Premium', 'Enhanced', 'Natural', 'WaveNet', 'Yuna', 'Sora', 'Nara', 'Nayeon', 'Female', '여성', 'Google', 'Microsoft'];
             
             voices.forEach((voice, index) => {
-                if (voice.lang.startsWith(currentLang.split('-')[0])) {
+                if (voice.lang.startsWith('ko') || voice.lang === 'ko-KR') {
                     const option = document.createElement('option');
                     option.value = index;
                     option.textContent = `${voice.name} (${voice.lang})`;
@@ -1055,7 +1089,7 @@
             
             if (preferredVoiceIndex === null && voices.length > 0) {
                 for (let i = 0; i < voices.length; i++) {
-                    if (voices[i].lang.startsWith(currentLang.split('-')[0])) {
+                    if (voices[i].lang.startsWith('ko') || voices[i].lang === 'ko-KR') {
                         preferredVoiceIndex = i;
                         break;
                     }
@@ -1071,8 +1105,6 @@
             speechSynthesis.onvoiceschanged = loadVoices;
         }
         loadVoices();
-
-        languageSelect.addEventListener('change', loadVoices);
 
         speedRange.addEventListener('input', (e) => {
             speedDisplay.textContent = parseFloat(e.target.value).toFixed(1) + 'x';
@@ -1124,7 +1156,7 @@
             }
 
             utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = languageSelect.value;
+            utterance.lang = 'ko-KR'; // 한국어 고정
             utterance.rate = parseFloat(speedRange.value);
             utterance.pitch = 0.75;
             utterance.volume = 1.0;
@@ -1156,6 +1188,39 @@
                 stopBtn.disabled = true;
                 progressContainer.classList.remove('active');
                 progressFill.style.width = '100%';
+                
+                // 읽기 기록 저장
+                if (startTime && text) {
+                    const readingTime = (Date.now() - startTime) / 1000 / 60; // 분 단위
+                    let readingHistory = JSON.parse(localStorage.getItem('readwithmom_history')) || [];
+                    let readingStats = JSON.parse(localStorage.getItem('readwithmom_stats')) || {
+                        totalReadings: 0,
+                        totalReadingTime: 0,
+                        totalCharacters: 0
+                    };
+                    
+                    readingHistory.push({
+                        date: new Date().toLocaleString('ko-KR'),
+                        text: text.substring(0, 100) + (text.length > 100 ? '...' : ''),
+                        fullText: text,
+                        tab: currentTab,
+                        duration: readingTime,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    readingStats.totalReadings++;
+                    readingStats.totalReadingTime += readingTime;
+                    readingStats.totalCharacters += text.length;
+                    
+                    if (readingHistory.length > 100) {
+                        readingHistory = readingHistory.slice(-100);
+                    }
+                    
+                    localStorage.setItem('readwithmom_history', JSON.stringify(readingHistory));
+                    localStorage.setItem('readwithmom_stats', JSON.stringify(readingStats));
+                    updateStats();
+                }
+                
                 startTime = null;
             };
 
@@ -1221,6 +1286,357 @@
                 }
             }
         }
+
+        // 읽기 기록 및 통계
+        let readingHistory = JSON.parse(localStorage.getItem('readwithmom_history')) || [];
+        let readingStats = JSON.parse(localStorage.getItem('readwithmom_stats')) || {
+            totalReadings: 0,
+            totalReadingTime: 0,
+            totalCharacters: 0
+        };
+
+        function updateStats() {
+            document.getElementById('totalReadings').textContent = readingStats.totalReadings;
+            document.getElementById('totalReadingTime').textContent = Math.round(readingStats.totalReadingTime) + '분';
+            document.getElementById('totalCharacters').textContent = readingStats.totalCharacters.toLocaleString();
+        }
+
+        // 즐겨찾기 저장
+        function saveBookmark() {
+            const activeTextarea = currentTab === 'parent' ? textInput : textInputChild;
+            const text = activeTextarea.value.trim();
+            
+            if (!text) {
+                alert('저장할 텍스트를 입력해주세요.');
+                return;
+            }
+            
+            const title = prompt('즐겨찾기 제목을 입력하세요:', text.substring(0, 30));
+            if (!title) return;
+            
+            const bookmarks = JSON.parse(localStorage.getItem('readwithmom_bookmarks')) || [];
+            bookmarks.push({
+                id: Date.now().toString(),
+                title: title,
+                text: text,
+                tab: currentTab,
+                date: new Date().toLocaleString('ko-KR'),
+                timestamp: new Date().toISOString()
+            });
+            
+            localStorage.setItem('readwithmom_bookmarks', JSON.stringify(bookmarks));
+            alert('즐겨찾기에 저장되었습니다!');
+        }
+
+        // 즐겨찾기 보기
+        function loadBookmarks() {
+            const bookmarks = JSON.parse(localStorage.getItem('readwithmom_bookmarks')) || [];
+            
+            if (bookmarks.length === 0) {
+                alert('저장된 즐겨찾기가 없습니다.');
+                return;
+            }
+            
+            let html = '<div style="max-height: 500px; overflow-y: auto; padding: 20px;">';
+            html += '<h3 style="margin-bottom: 20px; color: #333;">⭐ 즐겨찾기</h3>';
+            
+            bookmarks.reverse().forEach((bookmark) => {
+                html += `
+                    <div style="padding: 15px; margin-bottom: 15px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #ffc107;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                            <h4 style="color: #333; margin: 0;">${escapeHtml(bookmark.title)}</h4>
+                            <button onclick="deleteBookmark('${bookmark.id}')" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.85em;">삭제</button>
+                        </div>
+                        <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">${escapeHtml(bookmark.text.substring(0, 150))}${bookmark.text.length > 150 ? '...' : ''}</p>
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="loadBookmarkText('${bookmark.id}')" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">불러오기</button>
+                            <span style="color: #999; font-size: 0.85em; line-height: 2;">${bookmark.date}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;';
+            modal.innerHTML = `
+                <div style="background: white; border-radius: 20px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative;">
+                    <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="position: absolute; top: 15px; right: 15px; background: #dc3545; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 1.2em;">×</button>
+                    ${html}
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function loadBookmarkText(id) {
+            const bookmarks = JSON.parse(localStorage.getItem('readwithmom_bookmarks')) || [];
+            const bookmark = bookmarks.find(b => b.id === id);
+            
+            if (bookmark) {
+                if (bookmark.tab === 'parent') {
+                    textInput.value = bookmark.text;
+                    showTab('parent');
+                    charCount.textContent = bookmark.text.length;
+                } else {
+                    textInputChild.value = bookmark.text;
+                    showTab('child');
+                    charCountChild.textContent = bookmark.text.length;
+                }
+                document.querySelector('div[style*="position: fixed"]')?.remove();
+                alert('텍스트가 불러와졌습니다!');
+            }
+        }
+
+        function deleteBookmark(id) {
+            if (confirm('정말 삭제하시겠습니까?')) {
+                const bookmarks = JSON.parse(localStorage.getItem('readwithmom_bookmarks')) || [];
+                const filtered = bookmarks.filter(b => b.id !== id);
+                localStorage.setItem('readwithmom_bookmarks', JSON.stringify(filtered));
+                loadBookmarks();
+            }
+        }
+
+        // 텍스트 저장
+        function saveText() {
+            const activeTextarea = currentTab === 'parent' ? textInput : textInputChild;
+            const text = activeTextarea.value.trim();
+            
+            if (!text) {
+                alert('저장할 텍스트를 입력해주세요.');
+                return;
+            }
+            
+            const title = prompt('저장할 텍스트의 제목을 입력하세요:', '저장된 텍스트 ' + new Date().toLocaleDateString('ko-KR'));
+            if (!title) return;
+            
+            const savedTexts = JSON.parse(localStorage.getItem('readwithmom_saved_texts')) || [];
+            savedTexts.push({
+                id: Date.now().toString(),
+                title: title,
+                text: text,
+                tab: currentTab,
+                date: new Date().toLocaleString('ko-KR'),
+                timestamp: new Date().toISOString()
+            });
+            
+            localStorage.setItem('readwithmom_saved_texts', JSON.stringify(savedTexts));
+            alert('텍스트가 저장되었습니다!');
+        }
+
+        // 저장된 텍스트 불러오기
+        function loadSavedTexts() {
+            const savedTexts = JSON.parse(localStorage.getItem('readwithmom_saved_texts')) || [];
+            
+            if (savedTexts.length === 0) {
+                alert('저장된 텍스트가 없습니다.');
+                return;
+            }
+            
+            let html = '<div style="max-height: 500px; overflow-y: auto; padding: 20px;">';
+            html += '<h3 style="margin-bottom: 20px; color: #333;">💾 저장된 텍스트</h3>';
+            
+            savedTexts.reverse().forEach((saved) => {
+                html += `
+                    <div style="padding: 15px; margin-bottom: 15px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #28a745;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                            <h4 style="color: #333; margin: 0;">${escapeHtml(saved.title)}</h4>
+                            <button onclick="deleteSavedText('${saved.id}')" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.85em;">삭제</button>
+                        </div>
+                        <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">${escapeHtml(saved.text.substring(0, 150))}${saved.text.length > 150 ? '...' : ''}</p>
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="loadSavedText('${saved.id}')" style="background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">불러오기</button>
+                            <span style="color: #999; font-size: 0.85em; line-height: 2;">${saved.date}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;';
+            modal.innerHTML = `
+                <div style="background: white; border-radius: 20px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative;">
+                    <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="position: absolute; top: 15px; right: 15px; background: #dc3545; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 1.2em;">×</button>
+                    ${html}
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function loadSavedText(id) {
+            const savedTexts = JSON.parse(localStorage.getItem('readwithmom_saved_texts')) || [];
+            const saved = savedTexts.find(s => s.id === id);
+            
+            if (saved) {
+                if (saved.tab === 'parent') {
+                    textInput.value = saved.text;
+                    showTab('parent');
+                    charCount.textContent = saved.text.length;
+                } else {
+                    textInputChild.value = saved.text;
+                    showTab('child');
+                    charCountChild.textContent = saved.text.length;
+                }
+                document.querySelector('div[style*="position: fixed"]')?.remove();
+                alert('텍스트가 불러와졌습니다!');
+            }
+        }
+
+        function deleteSavedText(id) {
+            if (confirm('정말 삭제하시겠습니까?')) {
+                const savedTexts = JSON.parse(localStorage.getItem('readwithmom_saved_texts')) || [];
+                const filtered = savedTexts.filter(s => s.id !== id);
+                localStorage.setItem('readwithmom_saved_texts', JSON.stringify(filtered));
+                loadSavedTexts();
+            }
+        }
+
+        // 읽기 기록 보기
+        function showReadingHistory() {
+            const history = JSON.parse(localStorage.getItem('readwithmom_history')) || [];
+            
+            if (history.length === 0) {
+                alert('읽기 기록이 없습니다.');
+                return;
+            }
+            
+            let html = '<div style="max-height: 500px; overflow-y: auto; padding: 20px;">';
+            html += '<h3 style="margin-bottom: 20px; color: #333;">📊 읽기 기록</h3>';
+            
+            history.slice().reverse().slice(0, 20).forEach((record) => {
+                html += `
+                    <div style="padding: 15px; margin-bottom: 15px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #fd7e14;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong style="color: #333;">${record.date}</strong>
+                            <span style="color: #666; font-size: 0.9em;">${Math.round(record.duration)}분 읽음</span>
+                        </div>
+                        <p style="color: #666; font-size: 0.9em; margin: 0;">${escapeHtml(record.text)}</p>
+                        <div style="margin-top: 8px; font-size: 0.85em; color: #999;">
+                            ${record.tab === 'parent' ? '👨‍👩‍👧 부모와 함께' : '👶 아이를 위한'} | ${record.fullText ? record.fullText.length : 0}자
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;';
+            modal.innerHTML = `
+                <div style="background: white; border-radius: 20px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative;">
+                    <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="position: absolute; top: 15px; right: 15px; background: #dc3545; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 1.2em;">×</button>
+                    ${html}
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // 대화 가이드
+        function showConversationGuide() {
+            const guides = {
+                parent: [
+                    {
+                        topic: '감정 인식하기',
+                        questions: [
+                            '오늘 어떤 감정을 느꼈어요?',
+                            '화가 날 때는 어떻게 하면 좋을까요?',
+                            '슬플 때는 어떻게 하면 좋을까요?',
+                            '기쁠 때는 어떻게 표현하면 좋을까요?'
+                        ]
+                    },
+                    {
+                        topic: '자존감 키우기',
+                        questions: [
+                            '나는 어떤 점이 좋아요?',
+                            '내가 잘하는 것은 무엇일까요?',
+                            '자존감이 높으면 어떤 점이 좋을까요?',
+                            '우리는 어떻게 자존감을 키울 수 있을까요?'
+                        ]
+                    },
+                    {
+                        topic: '사회성 발달',
+                        questions: [
+                            '친구와 함께 할 때 어떤 점이 좋아요?',
+                            '친구가 슬퍼하면 어떻게 해야 할까요?',
+                            '협력한다는 것은 무엇일까요?',
+                            '우리는 어떻게 친구와 좋은 관계를 만들 수 있을까요?'
+                        ]
+                    }
+                ],
+                child: [
+                    {
+                        topic: '내 감정 알아보기',
+                        questions: [
+                            '지금 어떤 기분인가요?',
+                            '기쁠 때는 어떻게 느껴지나요?',
+                            '화가 날 때는 어떻게 하면 좋을까요?',
+                            '감정을 표현하는 것은 왜 중요할까요?'
+                        ]
+                    },
+                    {
+                        topic: '친구와 함께하기',
+                        questions: [
+                            '친구와 함께 놀 때 어떤 점이 좋아요?',
+                            '친구를 도와줄 때 어떤 기분이 드나요?',
+                            '친구와 싸웠을 때는 어떻게 하면 좋을까요?',
+                            '친구를 배려하는 것은 왜 중요할까요?'
+                        ]
+                    },
+                    {
+                        topic: '나만의 특별함',
+                        questions: [
+                            '나는 어떤 점이 특별한가요?',
+                            '내가 잘하는 것은 무엇인가요?',
+                            '다른 사람과 나는 어떻게 다른가요?',
+                            '나만의 특별함을 어떻게 키울 수 있을까요?'
+                        ]
+                    }
+                ]
+            };
+            
+            const currentGuides = guides[currentTab] || guides.parent;
+            
+            let html = '<div style="padding: 20px;">';
+            html += '<h3 style="margin-bottom: 20px; color: #333;">💬 부모-아이 대화 가이드</h3>';
+            
+            currentGuides.forEach(guide => {
+                html += `
+                    <div style="margin-bottom: 25px; padding: 20px; background: #f8f9fa; border-radius: 12px; border-left: 4px solid #e83e8c;">
+                        <h4 style="color: #e83e8c; margin-bottom: 15px;">${guide.topic}</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            ${guide.questions.map(q => `
+                                <li style="padding: 10px; margin-bottom: 8px; background: white; border-radius: 8px; color: #555;">
+                                    💭 ${q}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;';
+            modal.innerHTML = `
+                <div style="background: white; border-radius: 20px; padding: 30px; max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative;">
+                    <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="position: absolute; top: 15px; right: 15px; background: #dc3545; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 1.2em;">×</button>
+                    ${html}
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 초기 통계 로드
+        updateStats();
 
         charCount.textContent = textInput.value.length;
         charCountChild.textContent = textInputChild.value.length;
