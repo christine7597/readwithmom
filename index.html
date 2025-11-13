@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReadWithMom - Voice Cloning Audiobook</title>
+    <title>ReadWithMom - 아동심리 도움책 오디오북</title>
     <style>
         * {
             margin: 0;
@@ -227,13 +227,13 @@
     <div class="container">
         <div class="header">
             <h1>📚 ReadWithMom</h1>
-            <p>Voice Cloning Audiobook - 텍스트를 음성으로 변환하는 오디오북</p>
+            <p>아동심리 도움책 오디오북 - 아이를 위한 심리학 콘텐츠를 부드러운 목소리로</p>
         </div>
 
         <div class="main-card">
             <div class="form-group">
-                <label for="textInput">읽을 텍스트를 입력하세요</label>
-                <textarea id="textInput" placeholder="여기에 읽고 싶은 텍스트를 입력하세요...&#10;&#10;예: 오늘은 좋은 날입니다. 이 오디오북 기능을 사용하면 텍스트를 음성으로 들을 수 있습니다."></textarea>
+                <label for="textInput">아동심리 도움책 텍스트를 입력하세요</label>
+                <textarea id="textInput" placeholder="아이를 위한 심리학 관련 책, 글, 또는 도움 콘텐츠를 입력하세요...&#10;&#10;예: 아이들의 감정을 이해하고 표현하는 것은 매우 중요합니다. 아이가 슬프거나 화가 났을 때, 그 감정을 인정해주고 함께 이야기해보세요."></textarea>
                 <div class="char-count">
                     <span id="charCount">0</span> 글자
                 </div>
@@ -262,9 +262,9 @@
                 </div>
 
                 <div class="control-group">
-                    <label>읽기 속도</label>
-                    <input type="range" id="speedRange" min="0.5" max="2" step="0.1" value="0.9">
-                    <div class="speed-display" id="speedDisplay">0.9x</div>
+                    <label>읽기 속도 (느리게 = 더 부드럽게)</label>
+                    <input type="range" id="speedRange" min="0.5" max="2" step="0.1" value="0.8">
+                    <div class="speed-display" id="speedDisplay">0.8x</div>
                 </div>
             </div>
 
@@ -279,11 +279,12 @@
             </div>
 
             <div class="example-texts">
-                <h3>📖 예시 텍스트</h3>
-                <button class="example-btn" onclick="loadExample('korean')">한국어 예시</button>
-                <button class="example-btn" onclick="loadExample('english')">English Example</button>
-                <button class="example-btn" onclick="loadExample('story')">짧은 이야기</button>
-                <button class="example-btn" onclick="loadExample('psychology')">심리학 관련</button>
+                <h3>📖 아동심리 도움책 예시</h3>
+                <button class="example-btn" onclick="loadExample('emotion')">아이의 감정 이해하기</button>
+                <button class="example-btn" onclick="loadExample('communication')">효과적인 소통</button>
+                <button class="example-btn" onclick="loadExample('selfesteem')">자존감 키우기</button>
+                <button class="example-btn" onclick="loadExample('behavior')">행동 이해하기</button>
+                <button class="example-btn" onclick="loadExample('anxiety')">불안 관리하기</button>
             </div>
         </div>
     </div>
@@ -313,8 +314,8 @@
             let preferredVoiceIndex = null;
             let preferredVoiceName = '';
             
-            // 한국어의 경우 여성 음성을 우선 선택
-            const preferredNames = ['Yuna', 'Sora', 'Nara', 'Nayeon', 'Female', '여성'];
+            // 한국어의 경우 여성 음성을 우선 선택 (더 부드러운 음성 우선)
+            const preferredNames = ['Yuna', 'Sora', 'Nara', 'Nayeon', 'Female', '여성', 'Google', 'Microsoft', 'Neural'];
             
             voices.forEach((voice, index) => {
                 if (voice.lang.startsWith(currentLang.split('-')[0])) {
@@ -365,7 +366,7 @@
         });
         
         // 초기 속도 표시
-        speedDisplay.textContent = '0.9x';
+        speedDisplay.textContent = '0.8x';
 
         // 글자 수 카운트
         textInput.addEventListener('input', (e) => {
@@ -386,9 +387,9 @@
 
             utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = languageSelect.value;
-            utterance.rate = parseFloat(speedRange.value);
-            utterance.pitch = 0.85; // 더 부드럽고 따뜻한 톤
-            utterance.volume = 1;
+            utterance.rate = Math.max(0.7, parseFloat(speedRange.value) * 0.9); // 더 느리게, 여유롭게
+            utterance.pitch = 0.7; // 더 낮고 부드러운 톤 (엄마 목소리처럼)
+            utterance.volume = 0.95; // 약간 낮춰서 더 부드럽게
 
             // 음성 선택
             const selectedVoiceIndex = voiceSelect.value;
@@ -450,28 +451,35 @@
         // 예시 텍스트 로드
         function loadExample(type) {
             const examples = {
-                korean: `안녕하세요. ReadWithMom 오디오북 기능을 사용해보세요. 
-이 기능은 텍스트를 음성으로 변환하여 읽어줍니다. 
-책을 읽기 어려운 상황에서도 내용을 들을 수 있어 매우 유용합니다. 
-언어와 읽기 속도를 조절할 수 있어 자신에게 맞는 설정으로 사용할 수 있습니다.`,
+                emotion: `아이들의 감정을 이해하고 표현하는 것은 매우 중요합니다. 
+아이가 슬프거나 화가 났을 때, 그 감정을 인정해주고 함께 이야기해보세요. 
+"지금 화가 났구나", "슬프구나"라고 말해주면 아이는 자신의 감정을 이해하게 됩니다. 
+감정은 나쁜 것이 아니며, 모든 감정은 괜찮다는 것을 아이에게 알려주세요. 
+아이가 감정을 표현할 수 있는 안전한 공간을 만들어주는 것이 중요합니다.`,
 
-                english: `Hello! Welcome to ReadWithMom Audiobook. 
-This feature converts text to speech, making it easy to listen to content. 
-You can adjust the language and reading speed to suit your preferences. 
-It's perfect for when you want to listen instead of read.`,
+                communication: `아이와 효과적으로 소통하려면 먼저 들어주는 것이 중요합니다. 
+아이가 말할 때는 중간에 끼어들지 말고 끝까지 들어주세요. 
+아이의 눈높이에 맞춰 앉아서 대화하면 더 잘 소통할 수 있습니다. 
+질문을 할 때는 "왜 그랬어?"보다는 "어떻게 생각해?"처럼 열린 질문을 하세요. 
+아이의 말에 공감하고 이해하려는 자세가 중요합니다.`,
 
-                story: `옛날 옛날에, 작은 마을에 할머니가 살고 있었습니다. 
-할머니는 매일 아침 일찍 일어나서 정원의 꽃들에게 물을 주었습니다. 
-어느 날, 할머니는 정원에서 반짝이는 작은 돌멩이를 발견했습니다. 
-그 돌멩이는 마법의 돌이었고, 할머니의 소원을 들어주었습니다. 
-할머니는 "모든 사람이 행복했으면 좋겠다"고 소원을 빌었고, 
-그 이후로 마을은 더욱 평화롭고 행복한 곳이 되었습니다.`,
+                selfesteem: `아이의 자존감을 키우려면 먼저 아이를 있는 그대로 받아들여야 합니다. 
+아이가 잘한 일에 대해 구체적으로 칭찬해주세요. 
+"열심히 했구나", "도와줘서 고마워"처럼 행동을 칭찬하면 아이는 자신감을 갖게 됩니다. 
+아이가 실패했을 때도 함께 격려하고, 다음에는 더 잘할 수 있다고 믿어주세요. 
+아이가 자신의 의견을 표현할 수 있도록 기회를 주는 것도 중요합니다.`,
 
-                psychology: `인지 행동 치료(CBT)는 심리 치료의 한 방법입니다. 
-이 치료법은 사람의 생각, 감정, 행동이 서로 연결되어 있다고 봅니다. 
-부정적인 생각 패턴을 인식하고 변화시킴으로써, 
-더 건강한 감정과 행동을 이끌어낼 수 있습니다. 
-CBT는 우울증, 불안장애 등 다양한 정신건강 문제에 효과적입니다.`
+                behavior: `아이의 행동 뒤에는 항상 이유가 있습니다. 
+아이가 떼를 쓰거나 문제 행동을 할 때, 먼저 왜 그런 행동을 하는지 생각해보세요. 
+피곤하거나 배고프거나, 관심을 받고 싶어서일 수도 있습니다. 
+행동 자체를 비난하기보다는, 아이의 필요를 이해하려고 노력하세요. 
+명확하고 일관된 규칙을 정하고, 좋은 행동에는 긍정적으로 반응해주세요.`,
+
+                anxiety: `아이들도 불안을 느낄 수 있습니다. 
+새로운 환경이나 변화에 대해 불안해하는 것은 자연스러운 일입니다. 
+아이가 불안해할 때는 안심시켜주고, 함께 대처 방법을 찾아보세요. 
+깊게 숨을 들이쉬고 내쉬는 호흡 연습을 함께 해보는 것도 좋습니다. 
+아이의 불안이 너무 심하거나 오래 지속되면 전문가의 도움을 받는 것이 좋습니다.`
             };
 
             textInput.value = examples[type] || '';
