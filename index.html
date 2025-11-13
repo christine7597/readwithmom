@@ -1154,11 +1154,16 @@
                 voiceSelect.value = preferredVoiceIndex;
             }
             
-            // 한국어 음성 개수 표시
+            // 한국어 음성 개수 표시 (더 상세한 정보)
             if (allKoreanVoices.length > 0) {
                 const infoText = document.querySelector('.info-text');
                 if (infoText) {
-                    infoText.innerHTML = `💡 ${allKoreanVoices.length}개의 한국어 음성 중 선택 가능합니다. ⭐ 표시는 추천 음성입니다.`;
+                    const priorityCount = Array.from(voiceSelect.options).filter(opt => 
+                        opt.textContent.includes('⭐') || opt.textContent.includes('✨')
+                    ).length;
+                    infoText.innerHTML = `💡 총 ${allKoreanVoices.length}개의 한국어 음성 중 선택 가능합니다. 
+                        ${priorityCount > 0 ? `⭐ 표시된 ${priorityCount}개는 추천 음성입니다.` : ''}
+                        👩는 여성 목소리, 👨는 남성 목소리입니다.`;
                 }
             }
         }
