@@ -1514,6 +1514,13 @@
         };
 
         function updateStats() {
+            // localStorage에서 최신 통계 데이터를 다시 불러오기
+            readingStats = JSON.parse(localStorage.getItem('readwithmom_stats')) || {
+                totalReadings: 0,
+                totalReadingTime: 0,
+                totalCharacters: 0
+            };
+            
             document.getElementById('totalReadings').textContent = readingStats.totalReadings;
             document.getElementById('totalReadingTime').textContent = Math.round(readingStats.totalReadingTime) + '분';
             document.getElementById('totalCharacters').textContent = readingStats.totalCharacters.toLocaleString();
@@ -2459,10 +2466,17 @@
         }
 
         // 초기 통계 로드
+        // 페이지 로드 시 통계 업데이트
         updateStats();
 
+        // 글자 수 초기화
         charCount.textContent = textInput.value.length;
         charCountChild.textContent = textInputChild.value.length;
+        
+        // 주기적으로 통계 업데이트 (5초마다)
+        setInterval(() => {
+            updateStats();
+        }, 5000);
     </script>
 </body>
 </html>
