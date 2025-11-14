@@ -1059,11 +1059,14 @@
             }
         };
 
-        // 음성 변형 프리셋 (자연스러운 목소리 조합 - 3가지만)
+        // 음성 변형 프리셋 (실제로 다른 목소리처럼 들리도록 pitch와 rate 조합)
         const voiceVariations = [
             { name: '기본', pitch: 1.0, rate: 1.0, desc: '' },
-            { name: '따뜻한', pitch: 0.95, rate: 0.95, desc: ' 👩' }, // 약간 낮고 부드러운 자연스러운 톤
-            { name: '밝은', pitch: 1.05, rate: 1.0, desc: ' ✨' } // 약간 높고 자연스러운 톤
+            { name: '따뜻한', pitch: 0.92, rate: 0.92, desc: ' 👩' }, // 낮고 부드러운 자연스러운 톤
+            { name: '밝은', pitch: 1.08, rate: 1.02, desc: ' ✨' }, // 높고 활기찬 자연스러운 톤
+            { name: '부드러운', pitch: 0.88, rate: 0.90, desc: ' 💫' }, // 더 낮고 느린 부드러운 톤
+            { name: '명확한', pitch: 1.05, rate: 1.05, desc: ' 📢' }, // 명확하고 빠른 톤
+            { name: '차분한', pitch: 0.90, rate: 0.88, desc: ' 🧘' } // 차분하고 느린 톤
         ];
 
         // 음성 목록 로드 (한국어만, 실제 다른 음성 + 다양한 변형)
@@ -1268,15 +1271,17 @@
                     utterance.voice = voices[voiceIndex];
                 }
                 
-                // 변형 적용 (자연스러운 범위로)
+                // 변형 적용 (pitch와 rate 조합으로 실제로 다른 목소리처럼)
                 if (variationIndex > 0 && voiceVariations[variationIndex]) {
                     const variation = voiceVariations[variationIndex];
-                    // pitch는 변형 값 사용 (자연스러운 범위)
+                    // pitch와 rate를 조합해서 실제로 다른 목소리처럼 들리도록
                     utterance.pitch = variation.pitch;
-                    // rate는 변형의 기본 rate에 사용자 설정 속도를 곱하되, 자연스러운 범위 유지
+                    // rate는 변형의 기본 rate를 유지하되, 사용자 설정에 약간만 반영 (너무 극단적이지 않게)
                     const baseRate = variation.rate;
                     const userSpeed = parseFloat(speedRange.value);
-                    utterance.rate = baseRate * userSpeed;
+                    // 사용자 속도 조절을 자연스럽게 반영 (0.9 ~ 1.1 범위로 제한)
+                    const adjustedSpeed = Math.max(0.9, Math.min(1.1, userSpeed));
+                    utterance.rate = baseRate * adjustedSpeed;
                 } else {
                     // 기본값: 자연스러운 범위
                     utterance.pitch = 1.0;
