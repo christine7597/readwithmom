@@ -1064,9 +1064,8 @@
             voices = synth.getVoices();
             voiceSelect.innerHTML = '<option value="">기본 음성 (자동 선택)</option>';
             
-            const currentLang = 'ko-KR';
-            let preferredVoiceIndex = null;
-            const seenVoices = new Set(); // 중복 음성 제거용
+            const seenVoices = new Map(); // 중복 음성 제거용: key는 음성 이름, value는 실제 인덱스
+            const uniqueVoices = []; // 실제로 추가된 음성들
             
             // 한국어 음성 우선순위
             const preferredNames = [
@@ -1077,83 +1076,103 @@
                 'Korean', 'Korea', 'Seoul'
             ];
             
-            // 모든 한국어 음성 수집 (중복 제거)
+            // 모든 한국어 음성 수집 (중복 제거 - 같은 이름의 음성은 한 번만)
             voices.forEach((voice, index) => {
                 if (voice.lang.startsWith('ko') || voice.lang === 'ko-KR' || voice.lang === 'ko') {
+                    const voiceKey = voice.name.toLowerCase().trim();
+                    
                     // 같은 이름의 음성은 한 번만 추가 (실제로 다른 음성만)
-                    const voiceKey = voice.name.toLowerCase();
-                    if (seenVoices.has(voiceKey)) {
-                        return; // 이미 추가된 음성은 건너뛰기
-                    }
-                    seenVoices.add(voiceKey);
-                    
-                    const option = document.createElement('option');
-                    option.value = index;
-                    
-                    // 음성 이름에 우선순위 표시
-                    let displayName = voice.name;
-                    const voiceNameLower = voice.name.toLowerCase();
-                    
-                    // 우선순위가 높은 음성에 표시 추가
-                    let priority = '';
-                    let priorityLevel = -1;
-                    for (let i = 0; i < preferredNames.length; i++) {
-                        if (voiceNameLower.includes(preferredNames[i].toLowerCase())) {
-                            priorityLevel = i;
-                            break;
-                        }
-                    }
-                    
-                    if (priorityLevel >= 0) {
-                        if (priorityLevel < 7) {
-                            priority = ' ⭐⭐⭐'; // 최고 우선순위
-                        } else if (priorityLevel < 15) {
-                            priority = ' ⭐⭐'; // 높은 우선순위
-                        } else {
-                            priority = ' ⭐'; // 중간 우선순위
-                        }
-                    }
-                    
-                    // 성별 표시 추가
-                    let gender = '';
-                    const femaleKeywords = ['female', '여성', '여자', 'yuna', 'sora', 'nara', 'nayeon',
-                        '아름', '지은', '수진', '미래', '다은', '서연', '민지', '지우', '예은', '채원',
-                        'mom', 'mother', '엄마', '어머니', '아줌마', '아주머니', 'girl', 'woman'];
-                    const maleKeywords = ['male', '남성', '남자', 'boy', 'man', '아빠', '아버지'];
-                    
-                    if (femaleKeywords.some(keyword => voiceNameLower.includes(keyword))) {
-                        gender = ' 👩';
-                    } else if (maleKeywords.some(keyword => voiceNameLower.includes(keyword))) {
-                        gender = ' 👨';
-                    }
-                    
-                    option.textContent = `${displayName}${priority}${gender}`;
-                    voiceSelect.appendChild(option);
-                    
-                    // 첫 번째 우선순위 음성 선택
-                    if (preferredVoiceIndex === null) {
-                        for (let i = 0; i < preferredNames.length; i++) {
-                            if (voiceNameLower.includes(preferredNames[i].toLowerCase())) {
-                                preferredVoiceIndex = index;
-                                break;
-                            }
-                        }
+                    if (!seenVoices.has(voiceKey)) {
+                        seenVoices.set(voiceKey, index);
+                        uniqueVoices.push({ voice, index });
                     }
                 }
             });
             
-            // 우선순위 음성이 없으면 첫 번째 한국어 음성 선택
-            if (preferredVoiceIndex === null && seenVoices.size > 0) {
-                preferredVoiceIndex = Array.from(voiceSelect.options).findIndex(opt => opt.value !== '');
-                if (preferredVoiceIndex > 0) {
-                    voiceSelect.value = voiceSelect.options[preferredVoiceIndex].value;
+            // 우선순위에 따라 정렬
+            uniqueVoices.sort((a, b) => {
+                const aName = a.voice.name.toLowerCase();
+                const bName = b.voice.name.toLowerCase();
+                
+                let aPriority = -1;
+                let bPriority = -1;
+                
+                for (let i = 0; i < preferredNames.length; i++) {
+                    if (aPriority === -1 && aName.includes(preferredNames[i].toLowerCase())) {
+                        aPriority = i;
+                    }
+                    if (bPriority === -1 && bName.includes(preferredNames[i].toLowerCase())) {
+                        bPriority = i;
+                    }
+                    if (aPriority !== -1 && bPriority !== -1) break;
                 }
-            } else if (preferredVoiceIndex !== null) {
-                voiceSelect.value = preferredVoiceIndex;
+                
+                if (aPriority === -1) aPriority = 999;
+                if (bPriority === -1) bPriority = 999;
+                
+                return aPriority - bPriority;
+            });
+            
+            let preferredVoiceValue = null;
+            
+            // 정렬된 음성들을 드롭다운에 추가
+            uniqueVoices.forEach(({ voice, index }) => {
+                const option = document.createElement('option');
+                option.value = index;
+                
+                const voiceNameLower = voice.name.toLowerCase();
+                
+                // 우선순위 표시
+                let priority = '';
+                let priorityLevel = -1;
+                for (let i = 0; i < preferredNames.length; i++) {
+                    if (voiceNameLower.includes(preferredNames[i].toLowerCase())) {
+                        priorityLevel = i;
+                        break;
+                    }
+                }
+                
+                if (priorityLevel >= 0) {
+                    if (priorityLevel < 7) {
+                        priority = ' ⭐⭐⭐';
+                    } else if (priorityLevel < 15) {
+                        priority = ' ⭐⭐';
+                    } else {
+                        priority = ' ⭐';
+                    }
+                }
+                
+                // 성별 표시
+                let gender = '';
+                const femaleKeywords = ['female', '여성', '여자', 'yuna', 'sora', 'nara', 'nayeon',
+                    '아름', '지은', '수진', '미래', '다은', '서연', '민지', '지우', '예은', '채원',
+                    'mom', 'mother', '엄마', '어머니', '아줌마', '아주머니', 'girl', 'woman'];
+                const maleKeywords = ['male', '남성', '남자', 'boy', 'man', '아빠', '아버지'];
+                
+                if (femaleKeywords.some(keyword => voiceNameLower.includes(keyword))) {
+                    gender = ' 👩';
+                } else if (maleKeywords.some(keyword => voiceNameLower.includes(keyword))) {
+                    gender = ' 👨';
+                }
+                
+                option.textContent = `${voice.name}${priority}${gender}`;
+                voiceSelect.appendChild(option);
+                
+                // 첫 번째 우선순위 음성 선택
+                if (preferredVoiceValue === null && priorityLevel >= 0 && priorityLevel < 15) {
+                    preferredVoiceValue = index;
+                }
+            });
+            
+            // 우선순위 음성 선택
+            if (preferredVoiceValue !== null) {
+                voiceSelect.value = preferredVoiceValue;
+            } else if (uniqueVoices.length > 0) {
+                voiceSelect.value = uniqueVoices[0].index;
             }
             
             // 한국어 음성 개수 표시
-            const totalVoices = seenVoices.size;
+            const totalVoices = uniqueVoices.length;
             if (totalVoices > 0) {
                 const infoText = document.querySelector('.info-text');
                 if (infoText) {
