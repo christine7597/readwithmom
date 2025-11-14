@@ -617,8 +617,8 @@
 
                 <div class="control-group">
                     <label>⚡ 읽기 속도</label>
-                    <input type="range" id="speedRange" min="0.5" max="2" step="0.1" value="0.9">
-                    <div class="speed-display" id="speedDisplay">0.9x</div>
+                    <input type="range" id="speedRange" min="0.8" max="1.2" step="0.05" value="1.0">
+                    <div class="speed-display" id="speedDisplay">1.0x</div>
                 </div>
             </div>
             
@@ -1059,23 +1059,11 @@
             }
         };
 
-        // 음성 변형 프리셋 (실제로 다른 목소리처럼 들리도록 다양한 조합)
+        // 음성 변형 프리셋 (자연스러운 목소리 조합 - 3가지만)
         const voiceVariations = [
             { name: '기본', pitch: 1.0, rate: 1.0, desc: '' },
-            { name: '따뜻한', pitch: 0.85, rate: 0.9, desc: ' 👩' },
-            { name: '밝은', pitch: 1.15, rate: 1.05, desc: ' ✨' },
-            { name: '부드러운', pitch: 0.8, rate: 0.85, desc: ' 💫' },
-            { name: '친근한', pitch: 0.95, rate: 0.95, desc: ' 😊' },
-            { name: '온화한', pitch: 0.9, rate: 0.88, desc: ' 🌸' },
-            { name: '명확한', pitch: 1.05, rate: 1.0, desc: ' 📢' },
-            { name: '차분한', pitch: 0.75, rate: 0.8, desc: ' 🧘' },
-            { name: '활기찬', pitch: 1.1, rate: 1.1, desc: ' ⚡' },
-            { name: '따뜻한 낮은', pitch: 0.7, rate: 0.9, desc: ' 👩' },
-            { name: '밝은 높은', pitch: 1.2, rate: 1.05, desc: ' ✨' },
-            { name: '부드러운 느린', pitch: 0.75, rate: 0.75, desc: ' 💫' },
-            { name: '친근한 빠른', pitch: 0.95, rate: 1.1, desc: ' 😊' },
-            { name: '온화한 중간', pitch: 0.88, rate: 0.92, desc: ' 🌸' },
-            { name: '명확한 빠른', pitch: 1.08, rate: 1.15, desc: ' 📢' }
+            { name: '따뜻한', pitch: 0.95, rate: 0.95, desc: ' 👩' }, // 약간 낮고 부드러운 자연스러운 톤
+            { name: '밝은', pitch: 1.05, rate: 1.0, desc: ' ✨' } // 약간 높고 자연스러운 톤
         ];
 
         // 음성 목록 로드 (한국어만, 실제 다른 음성 + 다양한 변형)
@@ -1222,7 +1210,7 @@
             }
         });
         
-        speedDisplay.textContent = '0.9x';
+        speedDisplay.textContent = '1.0x';
 
         function showTab(tabName) {
             currentTab = tabName;
@@ -1280,13 +1268,17 @@
                     utterance.voice = voices[voiceIndex];
                 }
                 
-                // 변형 적용
+                // 변형 적용 (자연스러운 범위로)
                 if (variationIndex > 0 && voiceVariations[variationIndex]) {
                     const variation = voiceVariations[variationIndex];
+                    // pitch는 변형 값 사용 (자연스러운 범위)
                     utterance.pitch = variation.pitch;
-                    // rate는 변형의 기본 rate에 사용자 설정 속도를 곱함
-                    utterance.rate = variation.rate * parseFloat(speedRange.value);
+                    // rate는 변형의 기본 rate에 사용자 설정 속도를 곱하되, 자연스러운 범위 유지
+                    const baseRate = variation.rate;
+                    const userSpeed = parseFloat(speedRange.value);
+                    utterance.rate = baseRate * userSpeed;
                 } else {
+                    // 기본값: 자연스러운 범위
                     utterance.pitch = 1.0;
                     utterance.rate = parseFloat(speedRange.value);
                 }
