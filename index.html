@@ -617,7 +617,7 @@
 
                 <div class="control-group">
                     <label>⚡ 읽기 속도</label>
-                    <input type="range" id="speedRange" min="0.8" max="1.2" step="0.05" value="1.0">
+                    <input type="range" id="speedRange" min="0.85" max="1.15" step="0.02" value="1.0">
                     <div class="speed-display" id="speedDisplay">1.0x</div>
                 </div>
             </div>
@@ -1059,14 +1059,14 @@
             }
         };
 
-        // 음성 변형 프리셋 (자연스러운 사람 목소리처럼 - pitch와 rate를 자연스러운 범위로)
+        // 음성 변형 프리셋 (진짜 사람이 말하는 것처럼 자연스럽게)
         const voiceVariations = [
             { name: '기본', pitch: 1.0, rate: 1.0, desc: '' },
-            { name: '따뜻한', pitch: 0.95, rate: 0.95, desc: ' 👩' }, // 자연스럽게 낮고 부드러운 톤
-            { name: '밝은', pitch: 1.05, rate: 1.0, desc: ' ✨' }, // 자연스럽게 높고 활기찬 톤
-            { name: '부드러운', pitch: 0.92, rate: 0.92, desc: ' 💫' }, // 자연스럽게 낮고 느린 톤
-            { name: '명확한', pitch: 1.03, rate: 1.02, desc: ' 📢' }, // 자연스럽게 명확한 톤
-            { name: '차분한', pitch: 0.93, rate: 0.90, desc: ' 🧘' } // 자연스럽게 차분한 톤
+            { name: '따뜻한', pitch: 0.98, rate: 0.98, desc: ' 👩' }, // 자연스럽게 따뜻한 톤
+            { name: '밝은', pitch: 1.02, rate: 1.0, desc: ' ✨' }, // 자연스럽게 밝은 톤
+            { name: '부드러운', pitch: 0.97, rate: 0.97, desc: ' 💫' }, // 자연스럽게 부드러운 톤
+            { name: '명확한', pitch: 1.01, rate: 1.01, desc: ' 📢' }, // 자연스럽게 명확한 톤
+            { name: '차분한', pitch: 0.99, rate: 0.96, desc: ' 🧘' } // 자연스럽게 차분한 톤
         ];
 
         // 음성 목록 로드 (한국어만, 실제 다른 음성 + 다양한 변형)
@@ -1258,6 +1258,10 @@
             utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'ko-KR'; // 한국어 고정
             utterance.volume = 1.0;
+            
+            // 자연스러운 사람 말하기를 위한 기본 설정
+            utterance.pitch = 1.0; // 기본 pitch는 자연스러운 범위
+            utterance.rate = 1.0; // 기본 rate는 자연스러운 말하기 속도
 
             const selectedVoiceValue = voiceSelect.value;
             
@@ -1271,27 +1275,29 @@
                     utterance.voice = voices[voiceIndex];
                 }
                 
-                // 변형 적용 (자연스러운 사람 목소리처럼)
+                // 변형 적용 (진짜 사람이 말하는 것처럼 자연스럽게)
                 if (variationIndex > 0 && voiceVariations[variationIndex]) {
                     const variation = voiceVariations[variationIndex];
-                    // pitch는 자연스러운 범위로 설정 (사람 목소리 범위)
+                    // pitch는 자연스러운 사람 목소리 범위로 (0.97 ~ 1.02)
                     utterance.pitch = variation.pitch;
-                    // rate는 자연스러운 말하기 속도로 설정
+                    // rate는 자연스러운 말하기 속도로 (사람이 실제로 말하는 속도)
                     const baseRate = variation.rate;
                     const userSpeed = parseFloat(speedRange.value);
-                    // 사용자 속도 조절을 자연스럽게 반영 (0.9 ~ 1.1 범위로 제한)
-                    const adjustedSpeed = Math.max(0.9, Math.min(1.1, userSpeed));
-                    // 최종 rate는 자연스러운 범위 내에서 조정
+                    // 사용자 속도 조절을 매우 자연스럽게 반영 (0.88 ~ 1.12 범위로 제한)
+                    const adjustedSpeed = Math.max(0.88, Math.min(1.12, userSpeed));
+                    // 최종 rate는 자연스러운 사람 말하기 속도 범위 내에서
                     utterance.rate = baseRate * adjustedSpeed;
                 } else {
                     // 기본값: 자연스러운 사람 말하기 속도
                     utterance.pitch = 1.0;
                     const userSpeed = parseFloat(speedRange.value);
-                    // 자연스러운 범위로 제한
-                    utterance.rate = Math.max(0.9, Math.min(1.1, userSpeed));
+                    // 자연스러운 범위로 제한 (0.88 ~ 1.12)
+                    utterance.rate = Math.max(0.88, Math.min(1.12, userSpeed));
                 }
             } else {
-                utterance.rate = parseFloat(speedRange.value);
+                const userSpeed = parseFloat(speedRange.value);
+                // 자연스러운 범위로 제한
+                utterance.rate = Math.max(0.88, Math.min(1.12, userSpeed));
                 utterance.pitch = 1.0;
             }
 
