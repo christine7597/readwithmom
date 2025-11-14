@@ -1823,47 +1823,121 @@
             alert(`예상 읽기 시간: ${timeText}\n\n글자 수: ${text.length}자\n읽기 속도: ${currentSpeed.toFixed(2)}x`);
         }
 
-        // 빠른 문구 삽입
+        // 빠른 문구 삽입 (대폭 확장)
         function showQuickPhrases() {
             const quickPhrases = {
                 parent: [
-                    { text: '오늘 하루 어떤 일이 있었나요?', desc: '일상 대화 시작' },
-                    { text: '지금 어떤 기분이야?', desc: '감정 확인' },
-                    { text: '왜 그런 기분이 들었는지 이야기해볼까요?', desc: '감정 탐색' },
-                    { text: '엄마(아빠)가 들어줄게. 편하게 말해봐.', desc: '지지 표현' },
-                    { text: '그런 감정을 느끼는 것은 자연스러워요.', desc: '감정 수용' },
-                    { text: '다음에는 어떻게 하면 좋을까요?', desc: '해결책 모색' },
-                    { text: '네가 정말 잘했어. 자랑스러워.', desc: '칭찬' },
-                    { text: '함께 생각해볼까요?', desc: '협력 제안' }
+                    // 일상 대화
+                    { text: '오늘 하루 어떤 일이 있었나요?', desc: '일상 대화 시작', category: '일상 대화' },
+                    { text: '오늘 가장 기억에 남는 일은 무엇이었나요?', desc: '긍정적 경험 탐색', category: '일상 대화' },
+                    { text: '오늘 무엇을 배웠나요?', desc: '학습 확인', category: '일상 대화' },
+                    { text: '오늘 누구와 함께 있었나요?', desc: '사회적 관계', category: '일상 대화' },
+                    
+                    // 감정 관련
+                    { text: '지금 어떤 기분이야?', desc: '감정 확인', category: '감정 인식' },
+                    { text: '왜 그런 기분이 들었는지 이야기해볼까요?', desc: '감정 탐색', category: '감정 인식' },
+                    { text: '그런 감정을 느끼는 것은 자연스러워요.', desc: '감정 수용', category: '감정 인식' },
+                    { text: '화가 날 때는 어떻게 하면 좋을까요?', desc: '화 조절 방법', category: '감정 인식' },
+                    { text: '슬플 때는 어떻게 하면 좋을까요?', desc: '슬픔 대처', category: '감정 인식' },
+                    { text: '기쁠 때는 어떻게 표현하면 좋을까요?', desc: '기쁨 표현', category: '감정 인식' },
+                    
+                    // 지지 및 격려
+                    { text: '엄마(아빠)가 들어줄게. 편하게 말해봐.', desc: '지지 표현', category: '지지 및 격려' },
+                    { text: '네가 정말 잘했어. 자랑스러워.', desc: '칭찬', category: '지지 및 격려' },
+                    { text: '네가 노력한 모습이 정말 멋져.', desc: '노력 인정', category: '지지 및 격려' },
+                    { text: '실수해도 괜찮아. 누구나 실수를 해.', desc: '실수 수용', category: '지지 및 격려' },
+                    { text: '네가 최선을 다했다는 걸 알고 있어.', desc: '노력 인정', category: '지지 및 격려' },
+                    
+                    // 문제 해결
+                    { text: '다음에는 어떻게 하면 좋을까요?', desc: '해결책 모색', category: '문제 해결' },
+                    { text: '함께 생각해볼까요?', desc: '협력 제안', category: '문제 해결' },
+                    { text: '어떤 방법이 좋을 것 같아?', desc: '아이의 의견 물어보기', category: '문제 해결' },
+                    { text: '이 문제를 해결하기 위해 무엇이 필요할까요?', desc: '필요한 것 탐색', category: '문제 해결' },
+                    
+                    // 자존감
+                    { text: '네가 어떤 점이 좋은지 말해볼까요?', desc: '긍정적 자아 인식', category: '자존감' },
+                    { text: '네가 잘하는 것은 무엇일까요?', desc: '능력 인식', category: '자존감' },
+                    { text: '네가 특별한 이유를 말해볼까요?', desc: '특별함 인식', category: '자존감' },
+                    
+                    // 사회성
+                    { text: '친구와 함께할 때 어떤 점이 좋아요?', desc: '친구 관계', category: '사회성' },
+                    { text: '친구가 슬퍼하면 어떻게 해야 할까요?', desc: '공감 표현', category: '사회성' },
+                    { text: '협력한다는 것은 무엇일까요?', desc: '협력 이해', category: '사회성' }
                 ],
                 child: [
-                    { text: '나는 어떤 감정을 느낄 수 있을까요?', desc: '감정 인식' },
-                    { text: '화가 날 때는 어떻게 하면 좋을까요?', desc: '화 조절' },
-                    { text: '친구와 함께할 때 어떤 점이 좋을까요?', desc: '사회성' },
-                    { text: '나는 어떤 점이 좋은 사람일까요?', desc: '자존감' },
-                    { text: '다른 사람의 기분을 이해하려면 어떻게 해야 할까요?', desc: '공감' },
-                    { text: '용기를 내려면 어떻게 해야 할까요?', desc: '용기' },
-                    { text: '친절하게 대하려면 어떻게 해야 할까요?', desc: '친절' },
-                    { text: '마음을 진정시키려면 어떻게 해야 할까요?', desc: '마음 조절' }
+                    // 감정 인식
+                    { text: '나는 어떤 감정을 느낄 수 있을까요?', desc: '감정 인식', category: '감정' },
+                    { text: '지금 어떤 기분인가요?', desc: '현재 감정 확인', category: '감정' },
+                    { text: '화가 날 때는 어떻게 하면 좋을까요?', desc: '화 조절', category: '감정' },
+                    { text: '슬플 때는 어떻게 하면 좋을까요?', desc: '슬픔 대처', category: '감정' },
+                    { text: '기쁠 때는 어떻게 표현하면 좋을까요?', desc: '기쁨 표현', category: '감정' },
+                    { text: '두려울 때는 어떻게 하면 좋을까요?', desc: '두려움 대처', category: '감정' },
+                    
+                    // 자존감
+                    { text: '나는 어떤 점이 좋은 사람일까요?', desc: '자존감', category: '자존감' },
+                    { text: '나는 어떤 점이 특별한가요?', desc: '특별함 인식', category: '자존감' },
+                    { text: '내가 잘하는 것은 무엇인가요?', desc: '능력 인식', category: '자존감' },
+                    { text: '나는 어떤 점이 좋아요?', desc: '긍정적 자아', category: '자존감' },
+                    
+                    // 사회성
+                    { text: '친구와 함께할 때 어떤 점이 좋을까요?', desc: '사회성', category: '사회성' },
+                    { text: '친구를 도와줄 때 어떤 기분이 드나요?', desc: '도움의 기쁨', category: '사회성' },
+                    { text: '친구와 싸웠을 때는 어떻게 하면 좋을까요?', desc: '갈등 해결', category: '사회성' },
+                    { text: '친구를 배려하는 것은 왜 중요할까요?', desc: '배려의 중요성', category: '사회성' },
+                    
+                    // 공감
+                    { text: '다른 사람의 기분을 이해하려면 어떻게 해야 할까요?', desc: '공감', category: '공감' },
+                    { text: '친구가 슬퍼하면 어떻게 해야 할까요?', desc: '공감 표현', category: '공감' },
+                    { text: '다른 사람의 입장에서 생각해보면 어떨까요?', desc: '관점 전환', category: '공감' },
+                    
+                    // 용기와 도전
+                    { text: '용기를 내려면 어떻게 해야 할까요?', desc: '용기', category: '용기' },
+                    { text: '두려워도 도전할 수 있을까요?', desc: '두려움 극복', category: '용기' },
+                    { text: '새로운 것을 시도하는 것은 왜 중요할까요?', desc: '도전의 가치', category: '용기' },
+                    
+                    // 친절과 배려
+                    { text: '친절하게 대하려면 어떻게 해야 할까요?', desc: '친절', category: '친절' },
+                    { text: '다른 사람에게 친절하게 대하면 어떤 기분이 들까요?', desc: '친절의 기쁨', category: '친절' },
+                    
+                    // 마음 조절
+                    { text: '마음을 진정시키려면 어떻게 해야 할까요?', desc: '마음 조절', category: '마음 조절' },
+                    { text: '화가 날 때 마음을 진정시키는 방법은?', desc: '화 조절 방법', category: '마음 조절' },
+                    { text: '걱정이 될 때는 어떻게 하면 좋을까요?', desc: '걱정 대처', category: '마음 조절' }
                 ]
             };
             
             const phrases = quickPhrases[currentTab] || quickPhrases.parent;
             
-            let html = '<div style="max-height: 500px; overflow-y: auto; padding: 20px;">';
-            html += '<h3 style="margin-bottom: 20px; color: #333;">💬 빠른 문구 삽입</h3>';
-            html += '<p style="color: #666; margin-bottom: 15px; font-size: 0.9em;">클릭하면 텍스트 입력란에 삽입됩니다.</p>';
+            // 카테고리별로 그룹화
+            const categorized = {};
+            phrases.forEach(phrase => {
+                const cat = phrase.category || '기타';
+                if (!categorized[cat]) categorized[cat] = [];
+                categorized[cat].push(phrase);
+            });
             
-            phrases.forEach((phrase, index) => {
-                html += `
-                    <div style="padding: 15px; margin-bottom: 10px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #20c997; cursor: pointer; transition: all 0.3s;" 
-                         onclick="insertQuickPhrase('${phrase.text.replace(/'/g, "\\'")}')"
-                         onmouseover="this.style.background='#e9ecef'; this.style.transform='translateX(5px)'"
-                         onmouseout="this.style.background='#f8f9fa'; this.style.transform='translateX(0)'">
-                        <div style="font-weight: 600; color: #333; margin-bottom: 5px;">${escapeHtml(phrase.text)}</div>
-                        <div style="color: #999; font-size: 0.85em;">${escapeHtml(phrase.desc)}</div>
-                    </div>
-                `;
+            let html = '<div style="max-height: 600px; overflow-y: auto; padding: 20px;">';
+            html += '<h3 style="margin-bottom: 20px; color: #333;">💬 빠른 문구 삽입</h3>';
+            html += '<p style="color: #666; margin-bottom: 15px; font-size: 0.9em;">클릭하면 텍스트 입력란에 삽입됩니다. 키보드 단축키: <kbd>Ctrl/Cmd + K</kbd></p>';
+            
+            // 카테고리별로 표시
+            Object.keys(categorized).forEach(category => {
+                html += `<div style="margin-bottom: 25px;">`;
+                html += `<h4 style="color: #20c997; margin-bottom: 12px; font-size: 1.1em; border-bottom: 2px solid #20c997; padding-bottom: 5px;">${category}</h4>`;
+                
+                categorized[category].forEach((phrase, index) => {
+                    html += `
+                        <div style="padding: 12px; margin-bottom: 8px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #20c997; cursor: pointer; transition: all 0.3s;" 
+                             onclick="insertQuickPhrase('${phrase.text.replace(/'/g, "\\'").replace(/\n/g, ' ')}')"
+                             onmouseover="this.style.background='#e9ecef'; this.style.transform='translateX(5px)'"
+                             onmouseout="this.style.background='#f8f9fa'; this.style.transform='translateX(0)'">
+                            <div style="font-weight: 600; color: #333; margin-bottom: 4px; font-size: 0.95em;">${escapeHtml(phrase.text)}</div>
+                            <div style="color: #999; font-size: 0.8em;">${escapeHtml(phrase.desc)}</div>
+                        </div>
+                    `;
+                });
+                
+                html += `</div>`;
             });
             
             html += '</div>';
