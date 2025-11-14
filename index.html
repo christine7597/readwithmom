@@ -629,10 +629,12 @@
                         <button class="btn btn-secondary" id="pauseBtn" disabled>⏸️ 일시정지</button>
                         <button class="btn btn-danger" id="stopBtn" disabled>⏹️ 중지</button>
                     </div>
-                    <div id="status" class="status" style="margin-top: 10px;"></div>
-                    <div id="progressContainer" class="progress-container" style="margin-top: 10px;">
-                        <div id="progressFill" class="progress-fill"></div>
+                    <div id="progressContainer" class="progress-container" style="margin-top: 8px; display: none;">
+                        <div class="progress-bar">
+                            <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                        </div>
                     </div>
+                    <div id="status" class="status" style="margin-top: 10px; padding: 10px; border-radius: 8px; background: #f8f9fa; color: #666;">준비됨</div>
                 </div>
             </div>
             
